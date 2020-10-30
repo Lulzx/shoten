@@ -15,8 +15,9 @@
     "svite": "^0.6.0"
   },
   "dependencies": {
+    "@rollup/plugin-commonjs": "^16.0.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
     "punycode": "^2.1.1",
-    "rollup": "^2.32.1",
-    "rollup-plugin-skypack": "^1.0.0"
+    "rollup": "^2.32.1"
   }
 }

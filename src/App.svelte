@@ -11,7 +11,7 @@
   import { Form } from "carbon-components-svelte/src/Form";
   import { Button } from "carbon-components-svelte/src/Button";
   import { TextArea } from "carbon-components-svelte/src/TextArea";
-  import libgen from 'https://cdn.skypack.dev/libgen';
+  // import libgen from 'libgen'; REPLACE with FastApi
   let theme = "g10";
   let query = "";
   let text = "here we will see the result";
@@ -67,6 +67,7 @@
   ];
   const search = async () => {
     alert(query);
+    return // TODO
     const options = {
       mirror: "http://gen.lib.rus.ec",
       query: query,

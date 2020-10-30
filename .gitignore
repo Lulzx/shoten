@@ -2,3 +2,5 @@
 /node_modules
 yarn.lock
 .vscode
+*.yaml
+*.pyc

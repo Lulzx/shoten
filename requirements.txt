@@ -1,1 +1,3 @@
 libgen-api
+fastapi
+uvicorn
