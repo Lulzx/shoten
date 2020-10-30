@@ -12,5 +12,8 @@
     "svelte-hmr": "^0.10.2",
     "svelte-preprocess": "^4.2.1",
     "svite": "^0.6.0"
+  },
+  "dependencies": {
+    "libgen": "^2.1.0"
   }
 }
