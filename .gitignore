@@ -1,6 +1,14 @@
-/dist
-/node_modules
+/node_modules/
+/dist/
+.DS_Store
+**/.history
+/src/tmp/
+.routify
+.netlify
+assets/build
 yarn.lock
 .vscode
 *.yaml
 *.pyc
+__pycache__
+package-lock.json

@@ -1,0 +1,1 @@
+<strong><h1>This is crazy fast to compile!</h1></strong>

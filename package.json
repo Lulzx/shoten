@@ -1,23 +1,64 @@
 {
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "svite",
-    "build": "svite build"
-  },
-  "devDependencies": {
-    "carbon-components-svelte": "^0.12.0",
-    "libgen": "^2.1.0",
-    "node-sass": "^4.14.1",
-    "svelte": "^3.24.1",
-    "svelte-hmr": "^0.10.2",
-    "svelte-preprocess": "^4.2.1",
-    "svite": "^0.6.0"
-  },
-  "dependencies": {
-    "@rollup/plugin-commonjs": "^16.0.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
-    "punycode": "^2.1.1",
-    "rollup": "^2.32.1"
-  }
+   "name": "svelte-app",
+   "version": "1.0.0",
+   "scripts": {
+      "dev": "run-p routify rollup",
+      "dev:nollup": "run-p routify nollup",
+      "build": "routify -b && rollup -c && spank",
+      "now-build": "routify -b && rollup -c",
+      "serve": "spassr --ssr",
+      "export": "routify export",
+      "rollup": "rollup -cw",
+      "nollup": "nollup -c",
+      "routify": "routify",
+      "validate": "svelte-check"
+   },
+   "devDependencies": {
+      "@rollup/plugin-commonjs": "^13.0.0",
+      "@rollup/plugin-node-resolve": "^8.1.0",
+      "@rollup/plugin-typescript": "^4.0.0",
+      "@tsconfig/svelte": "^1.0.0",
+      "autoprefixer": "^9.8.6",
+      "carbon-components-svelte": "^0.15.0",
+      "concurrently": "^5.2.0",
+      "cross-env": "^7.0.2",
+      "cssnano": "^4.1.10",
+      "nollup": "^0.13.3",
+      "npm-run-all": "^4.1.5",
+      "rollup": "^2.18.1",
+      "rollup-plugin-hot": "^0.0.31",
+      "rollup-plugin-livereload": "^1.3.0",
+      "rollup-plugin-postcss": "^3.1.8",
+      "rollup-plugin-svelte": "^5.2.3",
+      "rollup-plugin-svelte-hot": "^0.10.0",
+      "rollup-plugin-terser": "^6.1.0",
+      "spassr": "^2.1.3",
+      "svelte-check": "^1.0.0",
+      "svelte-preprocess": "^4.0.0",
+      "tailwindcss": "^1.8.12",
+      "tslib": "^2.0.0",
+      "typescript": "^3.9.3"
+   },
+   "dependencies": {
+      "@roxi/routify": "^2.1.4-next-major",
+      "fs-extra": "^9.0.1",
+      "node-sass": "^4.14.1",
+      "postcss-import": "^12.0.1",
+      "rollup-plugin-workbox": "^5.2.1",
+      "spank": "^1.3.3",
+      "svelte": "^3.23.2",
+      "svelte-preprocess": "^4.0.8",
+      "tossr": "^1.2.0",
+      "workbox-cli": "^5.1.4"
+   },
+   "routify": {
+      "extensions": "svelte,html,svx,md",
+      "dynamicImports": true,
+      "routifyDir": ".routify"
+   },
+   "spank": {
+      "blacklist": [
+         "/example/modal/basic/4"
+      ]
+   }
 }
