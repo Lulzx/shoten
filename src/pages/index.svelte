@@ -10,7 +10,7 @@
   import { Row, Column } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
   import { DataTableSkeleton } from "carbon-components-svelte";
-  let query = "da vinci";
+  let query = "ikigai";
   let rows = [];
   const search = async () => {
     state = 'active';
@@ -63,7 +63,7 @@
             <InlineLoading status={state} description={descriptionMap[state]} />
           {:else}
             <Button on:click={search} type="submit">
-              Submit
+              Search
             </Button>
           {/if}
         </Column>
