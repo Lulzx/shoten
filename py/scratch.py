@@ -64,7 +64,7 @@ class LibgenSearch:
 class SearchRequest:
 
 	col_names = ["ID", "Author", "Title", "Publisher", "Year", "Pages", "Language", "Size", "Extension", 
-            "Mirror_1", "Mirror_2", "Mirror_3", "Mirror_4", "Mirror_5", "Edit"]
+			"Mirror_1", "Mirror_2", "Mirror_3", "Mirror_4", "Mirror_5", "Edit"]
 
 	def __init__(self, query, search_type="title"):
 		self.query = query
@@ -77,6 +77,7 @@ class SearchRequest:
 
 	def get_search_page(self):
 		query_parsed = "%20".join(self.query.split(" "))
+		search_url = ""
 		if self.search_type.lower() == 'title':
 			search_url = f'http://gen.lib.rus.ec/search.php?req={query_parsed}&column=title'
 		elif self.search_type.lower() == 'author':
@@ -109,17 +110,17 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "Hello, World!"}
+	return {"message": "Hello, World!"}
 
 
 @app.get("/query/{query}")
 async def read_item(query):
-    start = time.time()
-    title = query.lower()
-    filters = {
-        "Extension"	: "pdf"
-    }
-    result = s.search_title_filtered(title, filters)
-    end = time.time()
-    time_elapsed = end - start
-    return {"results": result, "count": len(result), "time": time_elapsed}
+	start = time.time()
+	title = query.lower()
+	filters = {
+		"Extension"	: "pdf"
+	}
+	result = s.search_title_filtered(title, filters)
+	end = time.time()
+	time_elapsed = end - start
+	return {"time": time_elapsed, "results": result, "count": len(result)}
