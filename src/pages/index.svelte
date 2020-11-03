@@ -66,19 +66,16 @@
   ];
   const search = async () => {
     text = query;
-    return // TODO
-    let data = "";
     // let loading = true; // USE this for animation
-
-    if (typeof window === "undefined") return;
-
     // loading = true;
-    let url = "http://127.0.0.1:8000/query/" + query;
-    await fetch(url, { mode: "no-cors" })
-      .then((response) => {
-        data = response.json();
-        console.log("Success:", data);
-      }); // later put the data in rows
+    let url = "https://lulzx.herokuapp.com/query/" + query;
+    let response = await fetch(url, {
+      method: "GET",
+      mode: "no-cors",
+    });
+    let data = await response.json();
+    text = data;
+    // later put the data in rows
     // setTimeout(() => loading = false, 500);
   };
 </script>
