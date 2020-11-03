@@ -1,6 +1,6 @@
 import time
 import requests
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from bs4 import BeautifulSoup
 
@@ -134,7 +134,9 @@ async def read_item(query):
 	filters = {
 		"Extension"	: "pdf"
 	}
-	result = s.search_title_filtered(title, filters)
+	result = str(s.search_title_filtered(title, filters)).replace("'", '"')
 	end = time.time()
-	time_elapsed = end - start
-	return {"time": time_elapsed, "results": result, "count": len(result)}
+	time_elapsed = str(end - start)
+	count = str(len(result))
+	data = '{"time": ' + time_elapsed + ', "results": ' + result + ', "count": ' + count + '}'
+	return Response(content=data, media_type="application/json")
