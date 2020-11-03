@@ -71,10 +71,11 @@
     let url = "https://lulzx.herokuapp.com/query/" + query;
     let response = await fetch(url, {
       method: "GET",
-      mode: "no-cors",
+      mode: "cors",
     });
     let data = await response.json();
-    text = data;
+    text = JSON.stringify(data);
+    console.log(text)
     // later put the data in rows
     // setTimeout(() => loading = false, 500);
   };
