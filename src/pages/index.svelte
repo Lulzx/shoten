@@ -2,35 +2,55 @@
   import { metatags } from "@roxi/routify";
   metatags.title = "Shoten Search";
   metatags.description = "Description coming soon...";
-  import { Button } from "carbon-components-svelte";
+  import { Button, InlineLoading } from "carbon-components-svelte";
+  import { onDestroy } from "svelte";
   import { Content } from "carbon-components-svelte";
   import { Search } from "carbon-components-svelte";
-  import { PaginationNav } from "carbon-components-svelte";
-  import { InlineLoading } from "carbon-components-svelte";
   import { DataTable } from "carbon-components-svelte";
-  import { Grid, Row, Column } from "carbon-components-svelte";
+  import { Row, Column } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
-  import { TextArea } from "carbon-components-svelte";
-
-  let query = "";
-  let text = "here we will see the result";
-  let rows = []
+  import { DataTableSkeleton } from "carbon-components-svelte";
+  let query = "da vinci";
+  let rows = [];
   const search = async () => {
-    text = query;
-    // let loading = true; // USE this for animation
-    // loading = true;
     let url = "https://lulzx.herokuapp.com/query/" + query;
     let response = await fetch(url, {
       method: "GET",
       mode: "cors",
     });
     let data = await response.json();
-    text = JSON.stringify(data);
     rows = data.results;
-    console.log(rows);
-    // later put the data in rows
-    // setTimeout(() => loading = false, 500);
+    state = "dormant"
   };
+
+  const descriptionMap = {
+    active: "searching...",
+    finished: "found!",
+  };
+
+  const stateMap = {
+    active: "finished",
+    finished: "dormant",
+  };
+
+  let timeout = undefined;
+  let state = "dormant";
+
+  function reset(incomingState) {
+    if (typeof timeout === "number") {
+      clearTimeout(timeout);
+    }
+
+    if (incomingState) {
+      timeout = setTimeout(() => {
+        state = incomingState;
+      }, 2000);
+    }
+  }
+
+  onDestroy(reset);
+
+  $: reset(stateMap[state]);
 </script>
 
 <div class="h-screen w-full">
@@ -41,33 +61,38 @@
           <Search bind:value={query} />
         </Column>
         <Column>
-          <Button type="submit">Submit</Button>
+          {#if state !== 'dormant'}
+            <InlineLoading status={state} description={descriptionMap[state]} />
+          {:else}
+            <Button on:click={() => (state = 'active')} type="submit">
+              Submit
+            </Button>
+          {/if}
         </Column>
       </Row>
     </Form>
-    <TextArea
-      labelText="App description"
-      placeholder="Enter a description..."
-      bind:value={text} />
-    <Grid>
-      <Row>
-        <Column style="outline: 0px solid var(--cds-interactive-04)">
-          <InlineLoading status="active" description="Searching..." />
-        </Column>
-        <Column style="outline: 0px solid var(--cds-interactive-04)">
-          <InlineLoading status="finished" description="Found" />
-        </Column>
-        <Column style="outline: 0px solid var(--cds-interactive-04)">
-          <InlineLoading status="error" description="Not found" />
-        </Column>
-      </Row>
-    </Grid>
-    <DataTable
-      sortable
-      title="Search Results"
-      description="The following are results for your query."
-      headers={[{ key: 'title', value: 'Title' }, { key: 'author', value: 'Author' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size'}, { key: 'download', value: 'Download'}]}
-      {rows} />
-    <PaginationNav total={3} loop />
+    {#if state === 'active'}
+      <DataTableSkeleton
+        headers={['Title', 'Author', 'Publisher', 'Year', 'Size', 'Download']}
+        rows={3} />
+    {:else}
+      <DataTable
+        sortable
+        zebra
+        title="Search Results"
+        description="The following are results for your query."
+        headers={[{ key: 'title', value: 'Title' }, { key: 'author', value: 'Author' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size' }, { key: 'download', value: 'Download' }]}
+        {rows}>
+        <!-- <span slot="cell" let:row let:cell>
+          {#if cell.key === 'download'}
+            <Link inline href={cell.value} target="_blank">
+              Download
+              <Launch16 />
+            </Link>
+          {:else}{cell.value}{/if}
+        </span> -->
+      </DataTable>
+    {/if}
+    <!-- <PaginationNav total={3} loop /> -->
   </Content>
 </div>

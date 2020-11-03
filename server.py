@@ -99,14 +99,13 @@ class SearchRequest:
 			]
 			for row in information_table.find_all("tr")[1:] # Skip row 0 as it is the headings row
 		]
-		print(raw_data)
-		cols = ["Title", "Author", "Publisher", "Year", "Size", "Mirror_1"]
+		cols = ["id", "title", "author", "publisher", "year", "size", "download"]
 		output_data = [ dict(zip(cols, self.sanitize(row))) for row in raw_data ]
-		# output_data = [ dict(zip(self.col_names, row))  for row in raw_data ]
 		return output_data
+
 	@staticmethod
 	def sanitize(row):
-		indices = 0, 5, 6, 8
+		indices = 5, 6, 8
 		return [i for j, i in enumerate(row[:10]) if j not in indices]
 
 book = LibgenSearch()
@@ -135,7 +134,7 @@ async def root():
 async def read_item(query):
 	start = time.time()
 	title = query.lower()
-	result = str(book.search_title(title)).replace("'", '"')
+	result = str(book.search_title(title))
 	end = time.time()
 	time_elapsed = str(end - start)
 	count = str(len(result))
