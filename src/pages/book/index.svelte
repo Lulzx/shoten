@@ -1,5 +1,7 @@
 <script>
   import { Grid, Row, Column } from "carbon-components-svelte";
+    import Download32 from "carbon-icons-svelte/lib/Download32";
+
   import { Button, ButtonSet, InlineLoading } from "carbon-components-svelte";
   import { Tile } from "carbon-components-svelte";
   import { onDestroy } from "svelte";
@@ -70,7 +72,7 @@ const descriptionMap = {
   {#if state !== 'dormant'}
     <InlineLoading status={state} description={descriptionMap[state]} />
   {:else}
-    <Button on:click={() => (state = 'active')}>Download</Button>
+    <Button icon={Download32} on:click={() => (state = 'active')}>Download</Button>
   {/if}</Column>
   </Row>
 </Grid>
