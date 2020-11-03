@@ -18,6 +18,7 @@
     "@rollup/plugin-node-resolve": "^8.1.0",
     "@rollup/plugin-typescript": "^4.0.0",
     "@tsconfig/svelte": "^1.0.0",
+    "@types/cors": "^2.8.8",
     "autoprefixer": "^9.8.6",
     "carbon-components-svelte": "^0.15.0",
     "concurrently": "^5.2.0",
@@ -41,6 +42,7 @@
   },
   "dependencies": {
     "@roxi/routify": "^2.5.0",
+    "cors": "^2.8.5",
     "execution-time": "^1.4.1",
     "fastify": "^3.7.0",
     "fs-extra": "^9.0.1",

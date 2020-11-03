@@ -1,7 +1,7 @@
 <script>
-  import { metatags } from '@roxi/routify'
-  metatags.title = 'Bruh'
-  metatags.description = 'Description coming soon...'
+  import { metatags } from "@roxi/routify";
+  metatags.title = "Shoten Search";
+  metatags.description = "Description coming soon...";
   import { Button } from "carbon-components-svelte";
   import { Content } from "carbon-components-svelte";
   import { Search } from "carbon-components-svelte";
@@ -11,8 +11,7 @@
   import { Grid, Row, Column } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
   import { TextArea } from "carbon-components-svelte";
-  // import libgen from 'libgen'; REPLACE with FastApi
-  let theme = "g10";
+
   let query = "";
   let text = "here we will see the result";
   let rows = [
@@ -66,26 +65,21 @@
     },
   ];
   const search = async () => {
-    alert(query);
     text = query;
     return // TODO
-    const options = {
-      mirror: "http://gen.lib.rus.ec",
-      query: query,
-      count: 20,
-      sort_by: "title",
-      reverse: false,
-    };
-    const data = await libgen.search(options);
+    let data = "";
+    // let loading = true; // USE this for animation
 
-    for (let item of data) {
-      const url = `http://libgen.rs/covers/${item.coverurl}`;
-      text += url;
-      console.log(
-        `Title: ${item.title}\nYear: ${item.year}\nAuthor: ${item.author}\nDownload: ${url}`
-      );
-      text += `Title: ${item.title}\nYear: ${item.year}\nAuthor: ${item.author}\nDownload: ${url}`;
-    }
+    if (typeof window === "undefined") return;
+
+    // loading = true;
+    let url = "http://127.0.0.1:8000/query/" + query;
+    await fetch(url, { mode: "no-cors" })
+      .then((response) => {
+        data = response.json();
+        console.log("Success:", data);
+      }); // later put the data in rows
+    // setTimeout(() => loading = false, 500);
   };
 </script>
 
@@ -94,14 +88,17 @@
     <Form on:submit={search}>
       <Row>
         <Column>
-            <Search bind:value={query} />
+          <Search bind:value={query} />
         </Column>
         <Column>
-            <Button type="submit">Submit</Button>
+          <Button type="submit">Submit</Button>
         </Column>
       </Row>
     </Form>
-    <TextArea labelText="App description" placeholder="Enter a description..." bind:value={text}/>
+    <TextArea
+      labelText="App description"
+      placeholder="Enter a description..."
+      bind:value={text} />
     <Grid>
       <Row>
         <Column style="outline: 0px solid var(--cds-interactive-04)">
