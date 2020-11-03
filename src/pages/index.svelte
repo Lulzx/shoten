@@ -14,56 +14,7 @@
 
   let query = "";
   let text = "here we will see the result";
-  let rows = [
-    {
-      id: "a",
-      name: "Book 3",
-      author: "Human",
-      year: 3000,
-      cost: 100,
-      addDate: "2020-10-21",
-    },
-    {
-      id: "b",
-      name: "Book 1",
-      author: "Human",
-      year: 443,
-      cost: 200,
-      addDate: "2020-09-10",
-    },
-    {
-      id: "c",
-      name: "Book 2",
-      author: "Human",
-      year: 80,
-      cost: 150,
-      addDate: "2020-11-24",
-    },
-    {
-      id: "d",
-      name: "Book 6",
-      author: "Human",
-      year: 3000,
-      cost: 250,
-      addDate: "2020-12-01",
-    },
-    {
-      id: "e",
-      name: "Book 4",
-      author: "Human",
-      year: 443,
-      cost: 550,
-      addDate: "2021-03-21",
-    },
-    {
-      id: "f",
-      name: "Book 5",
-      author: "Human",
-      year: 80,
-      cost: 400,
-      addDate: "2020-11-14",
-    },
-  ];
+  let rows = []
   const search = async () => {
     text = query;
     // let loading = true; // USE this for animation
@@ -75,7 +26,8 @@
     });
     let data = await response.json();
     text = JSON.stringify(data);
-    console.log(text)
+    rows = data.results;
+    console.log(rows);
     // later put the data in rows
     // setTimeout(() => loading = false, 500);
   };
@@ -114,7 +66,7 @@
       sortable
       title="Search Results"
       description="The following are results for your query."
-      headers={[{ key: 'name', value: 'Name' }, { key: 'author', value: 'Author' }, { key: 'year', value: 'Year' }, { key: 'cost', value: 'Cost', display: (cost) => cost + ' €' }, { key: 'addDate', value: 'Add date', display: (date) => new Date(date).toLocaleString(), sort: (a, b) => (new Date(a) <= new Date(b) ? -1 : 1) }]}
+      headers={[{ key: 'title', value: 'Title' }, { key: 'author', value: 'Author' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size'}, { key: 'download', value: 'Download'}]}
       {rows} />
     <PaginationNav total={3} loop />
   </Content>

@@ -64,5 +64,6 @@
     "blacklist": [
       "/example/modal/basic/4"
     ]
-  }
+  },
+    "license": "MIT"
 }
