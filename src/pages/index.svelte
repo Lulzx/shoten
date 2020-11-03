@@ -3,11 +3,7 @@
   metatags.title = 'Bruh'
   metatags.description = 'Description coming soon...'
   import { Button } from "carbon-components-svelte";
-  import { ComboBox } from "carbon-components-svelte";
   import { Content } from "carbon-components-svelte";
-  import { Select, SelectItem } from "carbon-components-svelte";
-  import {Header} from "./components/Header.svelte";
-  import {Theme} from "./components/Theme.svelte";
   import { Search } from "carbon-components-svelte";
   import { PaginationNav } from "carbon-components-svelte";
   import { InlineLoading } from "carbon-components-svelte";
