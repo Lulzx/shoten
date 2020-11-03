@@ -134,7 +134,7 @@ async def root():
 async def read_item(query):
 	start = time.time()
 	title = query.lower()
-	result = str(book.search_title(title))
+	result = str(book.search_title(title)).replace("'", '"')
 	end = time.time()
 	time_elapsed = str(end - start)
 	count = str(len(result))

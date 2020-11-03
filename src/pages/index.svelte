@@ -13,14 +13,12 @@
   let query = "da vinci";
   let rows = [];
   const search = async () => {
+    state = 'active';
     let url = "https://lulzx.herokuapp.com/query/" + query;
-    let response = await fetch(url, {
-      method: "GET",
-      mode: "cors",
-    });
+    let response = await fetch(url);
     let data = await response.json();
     rows = data.results;
-    state = "dormant"
+    state = 'dormant';
   };
 
   const descriptionMap = {
@@ -64,7 +62,7 @@
           {#if state !== 'dormant'}
             <InlineLoading status={state} description={descriptionMap[state]} />
           {:else}
-            <Button on:click={() => (state = 'active')} type="submit">
+            <Button on:click={search} type="submit">
               Submit
             </Button>
           {/if}
