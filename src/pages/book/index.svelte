@@ -9,18 +9,16 @@
   let subtitle = "A Modern Introduction to Programming";
   let description = "This book is designed to introduce students to programming and computational thinking through the lens of exploring data. You can think of Python as your tool to solve problems that are far beyond ...";
   let author = "Marijn Haverbeke";
-  let year = "2018"
+  let year = "2020"
   let src = "https://eloquentjavascript.net/img/cover.jpg"
 
 const descriptionMap = {
-    active: "Submitting...",
-    finished: "Success",
-    inactive: "Cancelling...",
+    active: "fetching...",
+    finished: "Success!",
   };
 
   const stateMap = {
     active: "finished",
-    inactive: "dormant",
     finished: "dormant",
   };
 
@@ -46,28 +44,60 @@ const descriptionMap = {
 
 <style>
   h1 {
-    font-size: 60px;
+    font-size: 45px;
   }
   h2 {
-    font-size: 45px;
-    color: #999;
+    font-size: 25px;
+    color: #989;
   }
    h3 {
-    font-size: 25px;
+    font-size: 18px;
   }
    p {
-    font-size: 20px;
+    font-size: 18px;
     background-color: #D9DDDC;
+    font-family:"Georgia";
   }
+  body {
+  background: #efefef;
+}
+.container {
+    padding: 0 60px;
+    min-width: 600px;
+}
+
+.paper {
+  display: -webkit-box;
+  display: flex;
+  -webkit-box-align: center;
+          align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 900px;
+  padding: 26px;
+  margin: 26px auto;
+  background: white;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  margin-top:50px;
+  margin-left:min(50%,75px);
+  margin-rightt:min(50%,75px);
+}
+/* Button
+{
+  margin:max(100%,520px);
+} */
 </style>
 
-<Tile>
-<Grid>
+<div class="container">
+  <div class="paper">
+  <Grid>
   <Row>
     <Column style="outline: 1px solid var(--cds-interactive-04)"><img {src} alt={subtitle}></Column>
     <Column style="outline: 1px solid var(--cds-interactive-04)"><h1>{title}</h1><br>
 <h2>{subtitle}</h2><br>
 <h3>By <a href="#!">{author}</a> · {year}</h3><br>
+<Tile></Tile>
   <p>{description}</p><br>
   {#if state !== 'dormant'}
     <InlineLoading status={state} description={descriptionMap[state]} />
@@ -76,4 +106,4 @@ const descriptionMap = {
   {/if}</Column>
   </Row>
 </Grid>
-</Tile>
+</div></div>
