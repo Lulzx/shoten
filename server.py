@@ -1,3 +1,4 @@
+import json
 import time
 import requests
 from fastapi import FastAPI, Response
@@ -101,13 +102,14 @@ class SearchRequest:
 		]
 		cols = ["id", "title", "author", "publisher", "year", "size", "download"]
 		output_data = [ dict(zip(cols, self.sanitize(row))) for row in raw_data ]
-		return output_data
+		return json.dumps(output_data)
 
 	@staticmethod
 	def sanitize(row):
 		indices = 5, 6, 8
 		row = [i for j, i in enumerate(row[:10]) if j not in indices]
-		row = [r.replace("'", "\'") for r in row]
+		for p in row:
+			p = p.replace("'", "\'").replace('"', '\"')
 		return row
 
 book = LibgenSearch()
