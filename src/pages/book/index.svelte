@@ -2,7 +2,7 @@
   import { Grid, Row, Column } from "carbon-components-svelte";
     import Download32 from "carbon-icons-svelte/lib/Download32";
 
-  import { Button, ButtonSet, InlineLoading } from "carbon-components-svelte";
+  import { Button, InlineLoading } from "carbon-components-svelte";
   import { Tile } from "carbon-components-svelte";
   import { onDestroy } from "svelte";
   let title = "Eloquent JavaScript";
