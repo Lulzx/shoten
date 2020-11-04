@@ -1,26 +1,24 @@
 <script>
   import { metatags } from "@roxi/routify";
   metatags.title = "Shoten Search";
-  metatags.description = "Description coming soon...";
+  metatags.description = "Book search engine";
   import { Button, InlineLoading } from "carbon-components-svelte";
   import { onDestroy } from "svelte";
   import { Content } from "carbon-components-svelte";
   import { Search } from "carbon-components-svelte";
-  import { DataTable, Link } from "carbon-components-svelte";
-  import { Row, Column } from "carbon-components-svelte";
+  import { DataTable} from "carbon-components-svelte";  import { Row, Column } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
-    import Launch16 from "carbon-icons-svelte/lib/Launch16";
   import { DataTableSkeleton } from "carbon-components-svelte";
   import Search32 from "carbon-icons-svelte/lib/Search32";
   let query = "ikigai";
   let rows = [];
   const search = async () => {
-    state = 'active';
+    state = "active";
     let url = "https://lulzx.herokuapp.com/query/" + query;
     let response = await fetch(url);
     let data = await response.json();
     rows = data.results;
-    state = 'dormant';
+    state = "dormant";
   };
 
   const descriptionMap = {
@@ -79,20 +77,24 @@
       <DataTable
         sortable
         zebra
+      on:click:row={({ detail }) => {
+        window.open(detail.download);
+      }}
         title="Search Results"
         description="The following are results for your query."
         headers={[{ key: 'title', value: 'Title' }, { key: 'author', value: 'Author' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size' }, { key: 'download', value: 'Download'}]}
         {rows}>
-        <!-- <span slot="cell" let:row let:cell>
+        <!-- <span slot="cell" let:cell>
           {#if cell.key === 'download'}
-            <Link inline href="{cell.value}" target="_blank">
-              Download
-              <Launch16 />
+            <Link
+              inline
+              href="https://en.wikipedia.org/wiki/Round-robin_DNS"
+              target="_blank">
+              {cell.value}
             </Link>
           {:else}{cell.value}{/if}
         </span> -->
       </DataTable>
     {/if}
-    <!-- <PaginationNav total={3} loop /> -->
-  </Content>
+   </Content>
 </div>

@@ -4,7 +4,7 @@
   import './tailwind.css';
 </script>
 
-<style  global>
+<style global>
   @import "../assets/global.css";
   @import "carbon-components-svelte/css/g10";
 </style>

@@ -21,7 +21,7 @@
     });
     ctx.updateVar("--cds-productive-heading-06-font-size", "4rem");
   }
-    let isOpen = false;
+  let isOpen = false;
 </script>
 
 <Header company="Shoten" platformName="Book Search Engine" href="/">
