@@ -7,7 +7,7 @@
     HeaderPanelLinks,
     HeaderPanelDivider,
     HeaderPanelLink,
-  } from "carbon-components-svelte/src/UIShell";
+  } from "carbon-components-svelte";
   import { getContext } from "svelte";
 
   const ctx = getContext("Theme");
