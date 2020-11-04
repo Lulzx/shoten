@@ -106,7 +106,9 @@ class SearchRequest:
 	@staticmethod
 	def sanitize(row):
 		indices = 5, 6, 8
-		return [i for j, i in enumerate(row[:10]) if j not in indices]
+		row = [i for j, i in enumerate(row[:10]) if j not in indices]
+		row = [r.replace("'", "\'") for r in row]
+		return row
 
 book = LibgenSearch()
 
@@ -134,7 +136,7 @@ async def root():
 async def read_item(query):
 	start = time.time()
 	title = query.lower()
-	result = str(book.search_title(title)).replace("'", "\'")
+	result = str(book.search_title(title))
 	end = time.time()
 	time_elapsed = str(end - start)
 	count = str(len(result))
