@@ -1,46 +1,30 @@
 <script>
   import { Grid, Row, Column } from "carbon-components-svelte";
   import Download32 from "carbon-icons-svelte/lib/Download32";
-
-  import { Button, InlineLoading } from "carbon-components-svelte";
+  import { SkeletonText, SkeletonPlaceholder } from "carbon-components-svelte";
+  import { Button } from "carbon-components-svelte";
   import { Tile } from "carbon-components-svelte";
-  import { onDestroy } from "svelte";
-  let title = "Eloquent JavaScript";
-  let subtitle = "A Modern Introduction to Programming";
-  let description =
-    "This book is designed to introduce students to programming and computational thinking through the lens of exploring data. You can think of Python as your tool to solve problems that are far beyond ...";
-  let author = "Marijn Haverbeke";
-  let year = "2020";
-  let src = "https://eloquentjavascript.net/img/cover.jpg";
+  import { onMount } from "svelte";
 
-  const descriptionMap = {
-    active: "fetching...",
-    finished: "Success!",
-  };
+  let loading = true;
+  let title, subtitle, description, author, year, src, download;
 
-  const stateMap = {
-    active: "finished",
-    finished: "dormant",
-  };
-
-  let timeout = undefined;
-  let state = "dormant";
-
-  function reset(incomingState) {
-    if (typeof timeout === "number") {
-      clearTimeout(timeout);
-    }
-
-    if (incomingState) {
-      timeout = setTimeout(() => {
-        state = incomingState;
-      }, 2000);
-    }
-  }
-
-  onDestroy(reset);
-
-  $: reset(stateMap[state]);
+  onMount(async () => {
+    let hash = new URL(window.location.href).searchParams.get("id")
+    let url = "http://lulzx.herokuapp.com/book/" + hash
+    let res = await fetch(url);
+    let data = await res.json();
+    title = data.title;
+    subtitle = data.subtitle;
+    description = data.description;
+    author = data.author;
+    year = data.year;
+    src = data.image;
+    download = data.direct_url
+    setTimeout(() => {
+      loading = false;
+    }, 1000);
+  });
 </script>
 
 <style>
@@ -88,20 +72,36 @@
     <Grid>
       <Row>
         <Column style="outline: 1px solid var(--cds-interactive-04)">
-          <img {src} alt={subtitle} />
+          {#if loading === true}
+            <SkeletonPlaceholder style="height: 31.25rem; width: 23rem;" />
+          {:else}<img {src} alt={subtitle} />{/if}
         </Column>
         <Column style="outline: 1px solid var(--cds-interactive-04)">
-          <h1>{title}</h1><br />
-          <h2>{subtitle}</h2><br />
-          <h3>By <a href="#!">{author}</a> · {year}</h3><br />
+          <h1>
+            {#if loading === true}
+              <SkeletonText paragraph lines={2} width="50%" />
+            {:else}{title}{/if}
+          </h1><br />
+          <h2>
+            {#if loading === true}
+              <SkeletonText paragraph lines={2} width="50%" />
+            {:else}{subtitle}{/if}
+          </h2><br />
+          <h3>
+            {#if loading === true}
+              <SkeletonText paragraph lines={2} width="50%" />
+            {:else}By <a href="#!">{author}</a> · {year}{/if}
+          </h3><br />
           <Tile />
-          <p>{description}</p><br />
-          {#if state !== 'dormant'}
-            <InlineLoading status={state} description={descriptionMap[state]} />
+          <p>
+            {#if loading === true}
+              <SkeletonText paragraph lines={2} width="50%" />
+            {:else}{description}{/if}
+          </p><br />
+          {#if loading === true}
+            <SkeletonPlaceholder style="height: 3rem; width: 9rem;" />
           {:else}
-            <Button icon={Download32} on:click={() => (state = 'active')}>
-              Download
-            </Button>
+          <Button href="{download}" icon={Download32}>Download</Button>
           {/if}
         </Column>
       </Row>

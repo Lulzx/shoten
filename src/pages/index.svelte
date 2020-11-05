@@ -6,7 +6,8 @@
   import { onDestroy } from "svelte";
   import { Content } from "carbon-components-svelte";
   import { Search } from "carbon-components-svelte";
-  import { DataTable} from "carbon-components-svelte";  import { Row, Column } from "carbon-components-svelte";
+  import { DataTable } from "carbon-components-svelte";
+  import { Row, Column } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
   import { DataTableSkeleton } from "carbon-components-svelte";
   import Search32 from "carbon-icons-svelte/lib/Search32";
@@ -71,18 +72,23 @@
     </Form>
     {#if state === 'active'}
       <DataTableSkeleton
-        headers={['Title', 'Author', 'Publisher', 'Year', 'Size', 'Download']}
+        headers={['Title', 'Author', 'Publisher', 'Year', 'Size']}
         rows={3} />
     {:else}
       <DataTable
         sortable
         zebra
-      on:click:row={({ detail }) => {
-        window.open(detail.download);
-      }}
+        on:click:row={({ detail }) => {
+          console.log(detail);
+          const str = detail.download;
+          const words = str.split('main/');
+          const hash = words[1];
+          const url = window.location.href + "book?id=" + hash
+          window.open(url);
+        }}
         title="Search Results"
         description="The following are results for your query."
-        headers={[{ key: 'title', value: 'Title' }, { key: 'author', value: 'Author' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size' }, { key: 'download', value: 'Download'}]}
+        headers={[{ key: 'title', value: 'Author' }, { key: 'author', value: 'Title' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size' }]}
         {rows}>
         <!-- <span slot="cell" let:cell>
           {#if cell.key === 'download'}
@@ -96,5 +102,5 @@
         </span> -->
       </DataTable>
     {/if}
-   </Content>
+  </Content>
 </div>
