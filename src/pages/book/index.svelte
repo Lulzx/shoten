@@ -1,6 +1,7 @@
 <script>
   import { Grid, Row, Column } from "carbon-components-svelte";
   import Download32 from "carbon-icons-svelte/lib/Download32";
+  import { ExpandableTile } from "carbon-components-svelte";
   import { SkeletonText, SkeletonPlaceholder } from "carbon-components-svelte";
   import { Button } from "carbon-components-svelte";
   import { Tile } from "carbon-components-svelte";
@@ -18,18 +19,26 @@
     subtitle = data.subtitle;
     description = data.description;
     author = data.author;
-    year = data.year;
+    year = data.year; 
     src = data.image;
     download = data.direct_url
     setTimeout(() => {
       loading = false;
     }, 1000);
   });
+  function description_handler(where){
+    if (where === 'above'){
+      return description.slice(0,645)
+    }
+    else {
+      return description.slice(645)
+    }
+  }
 </script>
 
 <style>
   h1 {
-    font-size: 45px;
+    font-size: 40px;
   }
   h2 {
     font-size: 25px;
@@ -38,10 +47,8 @@
   h3 {
     font-size: 18px;
   }
-  p {
-    font-size: 18px;
-    background-color: #d9dddc;
-    font-family: "Georgia";
+  a {
+    color: #0062FF
   }
   .container {
     padding: 0 60px;
@@ -93,11 +100,13 @@
             {:else}By <a href="#!">{author}</a> · {year}{/if}
           </h3><br />
           <Tile />
-          <p>
             {#if loading === true}
               <SkeletonText paragraph lines={2} width="50%" />
-            {:else}{description}{/if}
-          </p><br />
+            {:else}<ExpandableTile>
+  <div slot="above" style="height: 10rem">{description_handler('above')}</div>
+  <div slot="below" style="height: 10rem">{description_handler('below')}</div>
+</ExpandableTile>{/if}
+          <br />
           {#if loading === true}
             <SkeletonPlaceholder style="height: 3rem; width: 9rem;" />
           {:else}
