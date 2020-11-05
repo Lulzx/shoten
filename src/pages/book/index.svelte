@@ -1,7 +1,6 @@
 <script>
   import { Grid, Row, Column } from "carbon-components-svelte";
   import Download32 from "carbon-icons-svelte/lib/Download32";
-  import { ExpandableTile } from "carbon-components-svelte";
   import { SkeletonText, SkeletonPlaceholder } from "carbon-components-svelte";
   import { Button } from "carbon-components-svelte";
   import { Accordion, AccordionItem } from "carbon-components-svelte";
@@ -107,7 +106,7 @@
           {:else}
             <Accordion>
               <AccordionItem title="Description" open="true">
-                <p>{description_handler()}</p>
+                <p style="text-align:justify">{description_handler()}</p>
               </AccordionItem>
             </Accordion>
           {/if}
