@@ -83,24 +83,13 @@
           const str = detail.download;
           const words = str.split('main/');
           const hash = words[1];
-          const url = window.location.href + "book?id=" + hash
+          const url = window.location.href + 'book?id=' + hash;
           window.open(url);
         }}
         title="Search Results"
         description="The following are results for your query."
         headers={[{ key: 'title', value: 'Author' }, { key: 'author', value: 'Title' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size' }]}
-        {rows}>
-        <!-- <span slot="cell" let:cell>
-          {#if cell.key === 'download'}
-            <Link
-              inline
-              href="https://en.wikipedia.org/wiki/Round-robin_DNS"
-              target="_blank">
-              {cell.value}
-            </Link>
-          {:else}{cell.value}{/if}
-        </span> -->
-      </DataTable>
+        {rows} />
     {/if}
   </Content>
 </div>

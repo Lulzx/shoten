@@ -10,27 +10,26 @@
   let title, subtitle, description, author, year, src, download;
 
   onMount(async () => {
-    let hash = new URL(window.location.href).searchParams.get("id")
-    let url = "https://lulzx.herokuapp.com/book/" + hash
+    let hash = new URL(window.location.href).searchParams.get("id");
+    let url = "https://lulzx.herokuapp.com/book/" + hash;
     let res = await fetch(url);
     let data = await res.json();
     title = data.title;
     subtitle = data.subtitle;
     description = data.description;
     author = data.author;
-    year = data.year; 
+    year = data.year;
     src = data.image;
-    download = data.direct_url
+    download = data.direct_url;
     setTimeout(() => {
       loading = false;
     }, 1000);
   });
-  function description_handler(where){
-    if (where === 'above'){
-      return description.slice(0,465)
-    }
-    else {
-      return description.slice(465)
+  function description_handler(where) {
+    if (where === "above") {
+      return description.slice(0, 465);
+    } else {
+      return description.slice(465);
     }
   }
 </script>
@@ -47,7 +46,7 @@
     font-size: 16px;
   }
   a {
-    color: #0062FF
+    color: #0062ff;
   }
   .container {
     padding: 0 60px;
@@ -97,17 +96,23 @@
               <SkeletonText paragraph lines={2} width="50%" />
             {:else}By <a href="#!">{author}</a> · {year}{/if}
           </h3><br />
-            {#if loading === true}
-              <SkeletonText paragraph lines={2} width="50%" />
-            {:else}<ExpandableTile>
-  <div slot="above" style="height: 10rem">{description_handler('above')}</div>
-  <div slot="below" style="height: 10rem">{description_handler('below')}</div>
-</ExpandableTile>{/if}
+          {#if loading === true}
+            <SkeletonText paragraph lines={2} width="50%" />
+          {:else}
+            <ExpandableTile>
+              <div slot="above" style="height: 10rem">
+                {description_handler('above')}
+              </div>
+              <div slot="below" style="height: 10rem">
+                {description_handler('below')}
+              </div>
+            </ExpandableTile>
+          {/if}
           <br />
           {#if loading === true}
             <SkeletonPlaceholder style="height: 3rem; width: 9rem;" />
           {:else}
-          <Button href="{download}" icon={Download32}>Download</Button>
+            <Button href={download} icon={Download32}>Download</Button>
           {/if}
         </Column>
       </Row>
