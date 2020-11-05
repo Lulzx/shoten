@@ -1,5 +1,5 @@
 {
-  "name": "svelte-app",
+  "name": "shoten-search",
   "version": "1.0.0",
   "scripts": {
     "dev": "run-p routify rollup",
