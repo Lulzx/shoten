@@ -4,7 +4,6 @@
   import { ExpandableTile } from "carbon-components-svelte";
   import { SkeletonText, SkeletonPlaceholder } from "carbon-components-svelte";
   import { Button } from "carbon-components-svelte";
-  import { Tile } from "carbon-components-svelte";
   import { onMount } from "svelte";
 
   let loading = true;
@@ -28,24 +27,24 @@
   });
   function description_handler(where){
     if (where === 'above'){
-      return description.slice(0,645)
+      return description.slice(0,465)
     }
     else {
-      return description.slice(645)
+      return description.slice(465)
     }
   }
 </script>
 
 <style>
   h1 {
-    font-size: 40px;
+    font-size: 35px;
   }
   h2 {
-    font-size: 25px;
+    font-size: 20px;
     color: #989;
   }
   h3 {
-    font-size: 18px;
+    font-size: 16px;
   }
   a {
     color: #0062FF
@@ -68,7 +67,6 @@
     background: white;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
-    margin-top: 50px;
     margin-left: min(50%, 75px);
     margin-right: min(50%, 75px);
   }
@@ -99,7 +97,6 @@
               <SkeletonText paragraph lines={2} width="50%" />
             {:else}By <a href="#!">{author}</a> · {year}{/if}
           </h3><br />
-          <Tile />
             {#if loading === true}
               <SkeletonText paragraph lines={2} width="50%" />
             {:else}<ExpandableTile>
