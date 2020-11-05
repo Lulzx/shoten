@@ -23,7 +23,7 @@
 <div class="h-screen w-full">
   <Content style="background: none; padding: 1rem">
     <Form on:submit={search}>
-      <Search bind:value={query} placeholder="type book name..." />
+      <Search bind:value={query} placeholder="type book name..." autofocus=true />
     </Form>
     {#if state === "loading"}
       <DataTableSkeleton
