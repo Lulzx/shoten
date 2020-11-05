@@ -1,4 +1,5 @@
 import json
+import re
 import time
 import requests
 from fastapi import FastAPI, Response
@@ -177,6 +178,7 @@ async def book_info(id):
     description_prefix = "Description"
     description = str(soup.select_one('div:contains({})'.format(
         description_prefix))).removeprefix("<div>" + description_prefix + ":<br/>").removesuffix("</div>")
+    description = re.sub('<[^<]+?>', '', description)
     data = '{"title": "' + title + '", "subtitle": "' + subtitle + '", "description": "' + description + '", "year": "' + \
         year + '", "author": "' + author + '", "image": "' + \
         image + '", "direct_url": "' + direct_url + '"}'
