@@ -10,7 +10,8 @@ Then,
 ```
 git clone --depth=1 https://github.com/Lulzx/shoten-search.git
 cd shoten-search
-npm install
+yarn install
+yarn dev:nollup
 ```
 
 
