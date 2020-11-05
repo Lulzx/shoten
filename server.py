@@ -159,10 +159,10 @@ async def read_item(query):
 @app.get("/book/{id}")
 async def book_info(id):
     base_url = "http://library.lol"
-    link = base_url+"/main/"+id
+    link = base_url + "/main/" + id
     markup = requests.get(link).text
     soup = bs(markup, "lxml")
-    image = base_url + soup.find("img")['src']
+    image = "https://libgen.be" + soup.find("img")['src']
     direct_url = soup.select_one("a[href*=cloudflare]")["href"]
     heading = soup.find("h1").text.split(":")
     title = heading[0]
@@ -177,5 +177,7 @@ async def book_info(id):
     description_prefix = "Description"
     description = str(soup.select_one('div:contains({})'.format(
         description_prefix))).removeprefix("<div>" + description_prefix + ":<br/>").removesuffix("</div>")
-    data = '{"title": "' + title + '", "subtitle": "' + subtitle + '", "description": "' + description + '", "year": "' + year + '", "author": "' + author + '", "image": "' + image + '", "direct_url": "' + direct_url + '"}'
+    data = '{"title": "' + title + '", "subtitle": "' + subtitle + '", "description": "' + description + '", "year": "' + \
+        year + '", "author": "' + author + '", "image": "' + \
+        image + '", "direct_url": "' + direct_url + '"}'
     return Response(content=data, media_type="application/json")
