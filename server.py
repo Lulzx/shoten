@@ -187,6 +187,7 @@ async def book_info(id):
 		description = str(soup.select_one('div:contains({})'.format(
 			description_prefix))).removeprefix("<div>" + description_prefix + ":<br/>").removesuffix("</div>")
 		description = re.sub('<[^<]+?>', '', description)
+		description = description.replace("'", "\'").replace('"', '\"')
 	except:
 		description = " "
 	data = '{"title": "' + title + '", "subtitle": "' + subtitle + '", "description": "' + description + '", "year": "' + \
