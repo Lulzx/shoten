@@ -29,5 +29,5 @@ yarn dev:nollup
 
 ```
 pip install -r requirements.txt
-python -m uvicorn scratch:app --reload
+python -m uvicorn server:app --reload
 ```
