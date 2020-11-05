@@ -11,7 +11,7 @@
 
   onMount(async () => {
     let hash = new URL(window.location.href).searchParams.get("id")
-    let url = "http://lulzx.herokuapp.com/book/" + hash
+    let url = "https://lulzx.herokuapp.com/book/" + hash
     let res = await fetch(url);
     let data = await res.json();
     title = data.title;
