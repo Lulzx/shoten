@@ -175,7 +175,7 @@ async def book_info(id):
 		author = str(soup.select_one('p:contains({})'.format(
 			author_prefix)))[14:]
 		author = re.sub('<[^<]+?>', '', author)
-	except IndexError:
+	except:
 		author = " "
 	try:
 		year = re.sub('<[^<]+?>', '', str(soup.select_one('p:contains(Publisher)')).split(",")[
@@ -187,7 +187,7 @@ async def book_info(id):
 		description = str(soup.select_one('div:contains({})'.format(
 			description_prefix))).removeprefix("<div>" + description_prefix + ":<br/>").removesuffix("</div>")
 		description = re.sub('<[^<]+?>', '', description)
-	except IndexError:
+	except:
 		description = " "
 	data = '{"title": "' + title + '", "subtitle": "' + subtitle + '", "description": "' + description + '", "year": "' + \
 		year + '", "author": "' + author + '", "image": "' + \
