@@ -4,6 +4,7 @@
   import { ExpandableTile } from "carbon-components-svelte";
   import { SkeletonText, SkeletonPlaceholder } from "carbon-components-svelte";
   import { Button } from "carbon-components-svelte";
+  import { Accordion, AccordionItem } from "carbon-components-svelte";
   import { onMount } from "svelte";
 
   let loading = true;
@@ -25,12 +26,17 @@
       loading = false;
     }, 1000);
   });
-  function description_handler(where) {
-    if (where === "above") {
-      return description.slice(0, 465);
-    } else {
-      return description.slice(465);
+  function description_handler() {
+    let remaining_chars = 500;
+    let accordion_text = "";
+    let description_list = description.split(".");
+    for (let i of description_list) {
+      if (i.length < remaining_chars) {
+        accordion_text += i + '.';
+        remaining_chars -= i.length;
+      }
     }
+    return accordion_text;
   }
 </script>
 
@@ -99,14 +105,11 @@
           {#if loading === true}
             <SkeletonText paragraph lines={2} width="50%" />
           {:else}
-            <ExpandableTile>
-              <div slot="above" style="height: 10rem">
-                {description_handler('above')}
-              </div>
-              <div slot="below" style="height: 10rem">
-                {description_handler('below')}
-              </div>
-            </ExpandableTile>
+            <Accordion>
+              <AccordionItem title="Description" open="true">
+                <p>{description_handler()}</p>
+              </AccordionItem>
+            </Accordion>
           {/if}
           <br />
           {#if loading === true}
