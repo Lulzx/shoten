@@ -16,7 +16,7 @@
   let rows = [];
   let state = "onload";
   let type = "title";
-  let types = ["author", "title", "publisher", "year"];
+  let types = ["title", "author", "publisher", "year"];
   let headers = [...types, "size"].map(
     (x) => x.charAt(0).toUpperCase() + x.slice(1)
   );
