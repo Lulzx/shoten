@@ -2,4 +2,5 @@ lxml
 requests
 fastapi
 uvicorn
+aiofiles
 beautifulsoup4

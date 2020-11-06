@@ -1,6 +1,7 @@
 import json
 import re
 import time
+import base64
 import requests
 from fastapi import FastAPI, Response
 from fastapi.responses import FileResponse
@@ -171,7 +172,10 @@ async def book_info(id):
     link = base_url + "/main/" + id
     markup = requests.get(link).text
     soup = bs(markup, "lxml")
-    image = "https://libgen.be" + soup.find("img")['src']
+    image = base_url + soup.find("img")['src']
+    print(image)
+    response = requests.get(image).content
+    encoded_image_data = base64.b64encode(response).decode('utf-8')
     direct_url = soup.select_one("a[href*=cloudflare]")["href"]
     heading = soup.find("h1").text.split(":")
     title = heading[0]
@@ -203,5 +207,5 @@ async def book_info(id):
         description = " "
     data = '{"title": "' + title + '", "subtitle": "' + subtitle + '", "description": "' + description + '", "year": "' + \
         year + '", "author": "' + author + '", "image": "' + \
-        image + '", "direct_url": "' + direct_url + '"}'
+        encoded_image_data + '", "direct_url": "' + direct_url + '"}'
     return Response(content=data, media_type="application/json")
