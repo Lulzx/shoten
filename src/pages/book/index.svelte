@@ -12,7 +12,8 @@
   onMount(async () => {
     let hash = new URL(window.location.href).searchParams.get("id");
     if (hash === null){
-      return console.log("md5 not found");
+      console.log("md5 not found");
+      return;
     }
     let url = "https://lulzx.herokuapp.com/book/" + hash;
     let res = await fetch(url);
