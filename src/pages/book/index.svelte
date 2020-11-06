@@ -25,7 +25,7 @@
     author = data.author;
     year = data.year;
     src = data.image;
-    if (src === false) {
+    if (!src) {
       src = "https://picsum.photos/312/500";
     }
     download = data.direct_url;
@@ -65,13 +65,6 @@
   }
 
   .paper {
-    display: -webkit-box;
-    display: flex;
-    -webkit-box-align: center;
-    align-items: center;
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 900px;
     padding: 26px;
     margin: 26px auto;
     background: white;
@@ -87,27 +80,27 @@
     <Grid>
       <Row>
         <Column style="outline: 1px solid var(--cds-interactive-04)">
-          {#if loading === true}
+          {#if loading}
             <SkeletonPlaceholder style="height: 31.25rem; width: 23rem;" />
           {:else}<img {src} alt={subtitle} />{/if}
         </Column>
         <Column style="outline: 1px solid var(--cds-interactive-04)">
           <h1>
-            {#if loading === true}
+            {#if loading}
               <SkeletonText paragraph lines={2} width="50%" />
             {:else}{title}{/if}
           </h1><br />
           <h2>
-            {#if loading === true}
+            {#if loading}
               <SkeletonText paragraph lines={2} width="50%" />
             {:else}{subtitle}{/if}
           </h2><br />
           <h3>
-            {#if loading === true}
+            {#if loading}
               <SkeletonText paragraph lines={2} width="50%" />
             {:else}By <a href="#!">{author}</a> · {year}{/if}
           </h3><br />
-          {#if loading === true}
+          {#if loading}
             <SkeletonText paragraph lines={2} width="50%" />
           {:else}
             <Accordion>
@@ -117,7 +110,7 @@
             </Accordion>
           {/if}
           <br />
-          {#if loading === true}
+          {#if loading}
             <SkeletonPlaceholder style="height: 3rem; width: 9rem;" />
           {:else}
             <Button href={download} icon={Download32}>Download</Button>
