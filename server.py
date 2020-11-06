@@ -3,7 +3,6 @@ import re
 import time
 import base64
 import requests
-import uvicorn
 from bs4 import BeautifulSoup as bs
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -242,6 +241,3 @@ async def read_item(query):
     data = '{"title": "' + str(book.title) + '", "description": "' + str(book.description) + '", "authors": "' + str(
         book.authors) + '", "url": "' + str(book.url) + '", "streams": "' + str(book.streams) + '"}'
     return Response(content=data, media_type="application/json")
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8080)
