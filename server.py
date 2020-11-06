@@ -19,6 +19,14 @@ class LibgenSearch:
         self.search_request = SearchRequest(query, search_type="author")
         return self.search_request.aggregate_request_data()
 
+    def search_publisher(self, query):
+        self.search_request = SearchRequest(query, search_type="publisher")
+        return self.search_request.aggregate_request_data()
+
+    def search_year(self, query):
+        self.search_request = SearchRequest(query, search_type="year")
+        return self.search_request.aggregate_request_data()
+
     def search_title_filtered(self, query, filters={	"ID": "",
                                                      "Author": "",
                                                      "Title": "",
@@ -91,6 +99,10 @@ class SearchRequest:
             search_url = f'http://gen.lib.rus.ec/search.php?req={query_parsed}&column=title'
         elif self.search_type.lower() == 'author':
             search_url = f'http://gen.lib.rus.ec/search.php?req={query_parsed}&column=author'
+        elif self.search_type.lower() == 'publisher':
+            search_url = f'http://gen.lib.rus.ec/search.php?req={query_parsed}&column=publisher'
+        elif self.search_type.lower() == 'year':
+            search_url = f'http://gen.lib.rus.ec/search.php?req={query_parsed}&column=year'
         search_page = requests.get(search_url)
         return search_page
 
