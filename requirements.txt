@@ -3,4 +3,5 @@ requests
 fastapi
 uvicorn
 aiofiles
+audiobooker
 beautifulsoup4
