@@ -173,9 +173,9 @@ async def book_info(id):
     markup = requests.get(link).text
     soup = bs(markup, "lxml")
     image = base_url + soup.find("img")['src']
-    print(image)
     response = requests.get(image).content
-    encoded_image_data = base64.b64encode(response).decode('utf-8')
+    encoded_image_data = "data:image/png;base64," + \
+        base64.b64encode(response).decode('utf-8')
     direct_url = soup.select_one("a[href*=cloudflare]")["href"]
     heading = soup.find("h1").text.split(":")
     title = heading[0]
