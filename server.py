@@ -139,6 +139,7 @@ class SearchRequest:
             ext = "Mb"
         size = "{:.2f} {}".format(round(float(val), 2), ext).replace(".00", "")
         row[-2] = size
+        row[1], row[2] = row[2], row[1]
         return row
 
 
@@ -182,7 +183,7 @@ async def read_item(option, query):
     time_elapsed = str(end - start)
     count = str(len(result))
     data = '{"time": ' + time_elapsed + ', "results": ' + \
-        result + ', "count": ' + count + '}'
+        result + ', "count": "' + count + '"}'
     return Response(content=data, media_type="application/json")
 
 

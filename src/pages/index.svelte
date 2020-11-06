@@ -20,6 +20,7 @@
   let headers = [...types, "size"].map(
     (x) => x.charAt(0).toUpperCase() + x.slice(1)
   );
+  let shown, total;
   const search = async () => {
     state = "loading";
     let base_url = "https://lulzx.herokuapp.com/query/";
@@ -27,6 +28,8 @@
     let response = await fetch(url);
     let data = await response.json();
     rows = data.results;
+    shown = data.results.length
+    total = data.count;
     state = "completed";
   };
 </script>
@@ -61,8 +64,8 @@
           window.open(url);
         }}
         title="Search Results"
-        description="The following are results for your query."
-        headers={[{ key: 'title', value: 'Author' }, { key: 'author', value: 'Title' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size' }]}
+        description="Displaying {shown} out of {total} results for your query."
+        headers={headers.map(x => ({key: x.toLowerCase(), value:  x }))}
         {rows} />
     {/if}
   </Content>
