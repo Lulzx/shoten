@@ -21,9 +21,7 @@
     year = data.year;
     src = data.image;
     download = data.direct_url;
-    setTimeout(() => {
-      loading = false;
-    }, 1000);
+    loading = false;
   });
   function description_handler() {
     let remaining_chars = 500;
@@ -31,7 +29,7 @@
     let description_list = description.split(".");
     for (let i of description_list) {
       if (i.length < remaining_chars) {
-        accordion_text += i + '.';
+        accordion_text += i + ".";
         remaining_chars -= i.length;
       }
     }
