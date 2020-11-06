@@ -181,7 +181,10 @@ async def read_item(option, query):
         result = str(book.search_title(query))
     end = time.time()
     time_elapsed = str(end - start)
-    count = str(len(result))
+    if result == "[]":
+        count = '0'
+    else:
+        count = str(len(result))
     data = '{"time": ' + time_elapsed + ', "results": ' + \
         result + ', "count": "' + count + '"}'
     return Response(content=data, media_type="application/json")
