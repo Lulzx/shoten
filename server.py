@@ -221,3 +221,11 @@ async def book_info(id):
         year + '", "author": "' + author + '", "image": "' + \
         encoded_image_data + '", "direct_url": "' + direct_url + '"}'
     return Response(content=data, media_type="application/json")
+
+
+@app.get("/vox/{query}")
+async def read_item(query):
+    book = Librivox.search_audiobooks(title=query)[0]
+    data = '{"title": "' + str(book.title) + '", "description": "' + str(book.description) + '", "authors": "' + str(
+        book.authors) + '", "url": "' + str(book.url) + '", "streams": "' + str(book.streams) + '"}'
+    return Response(content=data, media_type="application/json")
