@@ -7,12 +7,23 @@
   import { DataTable } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
   import { DataTableSkeleton } from "carbon-components-svelte";
+  import {
+    FormGroup,
+    RadioButtonGroup,
+    RadioButton,
+  } from "carbon-components-svelte";
   let query = "";
   let rows = [];
   let state = "onload";
+  let type = "title";
+  let types = ["author", "title", "publisher", "year"];
+  let headers = [...types, "size"].map(
+    (x) => x.charAt(0).toUpperCase() + x.slice(1)
+  );
   const search = async () => {
     state = "loading";
-    let url = "https://lulzx.herokuapp.com/query/" + query;
+    let base_url = "https://lulzx.herokuapp.com/query/";
+    let url = base_url + type + "/" + query;
     let response = await fetch(url);
     let data = await response.json();
     rows = data.results;
@@ -23,13 +34,21 @@
 <div class="h-screen w-full">
   <Content style="background: none; padding: 1rem">
     <Form on:submit={search}>
-      <Search bind:value={query} placeholder="type book name..." autofocus=true />
+      <Search
+        bind:value={query}
+        placeholder="type book {type}..."
+        autofocus="true" />
     </Form>
-    {#if state === "loading"}
-      <DataTableSkeleton
-        headers={["Author", "Title", "Publisher", "Year", "Size"]}
-        rows={3} />
-    {:else if state === "onload"}
+    <FormGroup legendText="Filter (fields)">
+      <RadioButtonGroup labelPosition="right" selected={type}>
+        {#each types as k}
+          <RadioButton labelText={k} value={k} on:change={() => (type = k)} />
+        {/each}
+      </RadioButtonGroup>
+    </FormGroup>
+    {#if state === 'loading'}
+      <DataTableSkeleton {headers} rows={3} />
+    {:else if state === 'onload'}
       <hr />
     {:else}
       <DataTable
@@ -37,13 +56,13 @@
         zebra
         on:click:row={({ detail }) => {
           let str = detail.download,
-            hash = str.split("main/")[1],
-            url = window.location.href + "book?id=" + hash;
+            hash = str.split('main/')[1],
+            url = window.location.href + 'book?id=' + hash;
           window.open(url);
         }}
         title="Search Results"
         description="The following are results for your query."
-        headers={[{ key: "title", value: "Author" }, { key: "author", value: "Title" }, { key: "publisher", value: "Publisher" }, { key: "year", value: "Year" }, { key: "size", value: "Size" }]}
+        headers={[{ key: 'title', value: 'Author' }, { key: 'author', value: 'Title' }, { key: 'publisher', value: 'Publisher' }, { key: 'year', value: 'Year' }, { key: 'size', value: 'Size' }]}
         {rows} />
     {/if}
   </Content>

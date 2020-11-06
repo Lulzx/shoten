@@ -165,11 +165,19 @@ async def root():
     return {"message": "Hello, World!"}
 
 
-@app.get("/query/{query}")
-async def read_item(query):
+@app.get("/query/{option}/{query}")
+async def read_item(option, query):
     start = time.time()
-    title = query.lower()
-    result = str(book.search_title(title))
+    query = query.lower()
+    result = ""
+    if option == "author":
+        result = str(book.search_author(query))
+    elif option == "year":
+        result = str(book.search_year(query))
+    elif option == "publisher":
+        result = str(book.search_publisher(query))
+    else:
+        result = str(book.search_title(query))
     end = time.time()
     time_elapsed = str(end - start)
     count = str(len(result))

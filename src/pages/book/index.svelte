@@ -11,11 +11,12 @@
 
   onMount(async () => {
     let hash = new URL(window.location.href).searchParams.get("id");
-    if (hash === null){
+    if (hash === null) {
       console.log("md5 not found");
       return;
     }
-    let url = "https://lulzx.herokuapp.com/book/" + hash;
+    let base_url = "https://lulzx.herokuapp.com/book/";
+    let url = base_url + hash;
     let res = await fetch(url);
     let data = await res.json();
     title = data.title;
@@ -24,8 +25,8 @@
     author = data.author;
     year = data.year;
     src = data.image;
-    if (src === false){
-      src = "https://picsum.photos/312/500"
+    if (src === false) {
+      src = "https://picsum.photos/312/500";
     }
     download = data.direct_url;
     loading = false;
