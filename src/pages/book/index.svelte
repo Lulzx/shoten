@@ -79,12 +79,12 @@
   <div class="paper">
     <Grid>
       <Row>
-        <Column style="outline: 1px solid var(--cds-interactive-04)">
+        <Column>
           {#if loading}
             <SkeletonPlaceholder style="height: 31.25rem; width: 23rem;" />
           {:else}<img {src} alt={subtitle} />{/if}
         </Column>
-        <Column style="outline: 1px solid var(--cds-interactive-04)">
+        <Column>
           <h1>
             {#if loading}
               <SkeletonText paragraph lines={2} width="50%" />
