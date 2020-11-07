@@ -101,7 +101,7 @@
             {:else}By <a href="#!">{author}</a> · {year}{/if}
           </h3><br />
           {#if loading}
-            <SkeletonText paragraph lines={2} width="50%" />
+            <Accordion skeleton align="start" />
           {:else}
             <Accordion>
               <AccordionItem title="Description" open="true">
