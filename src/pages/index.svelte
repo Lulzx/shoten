@@ -4,10 +4,21 @@
   metatags.description = "Book search engine";
   import { Content } from "carbon-components-svelte";
   import { Search } from "carbon-components-svelte";
-  import { DataTable } from "carbon-components-svelte";
+  import { DataTable, DataTableSkeleton } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
-  import { DataTableSkeleton } from "carbon-components-svelte";
-  import { FormGroup, RadioButtonGroup, RadioButton } from "carbon-components-svelte";
+  import {
+    FormGroup,
+    RadioButtonGroup,
+    RadioButton,
+  } from "carbon-components-svelte";
+  import Header from "./components/Header.svelte";
+  import Theme from "./components/Theme.svelte";
+  import { Toggle } from "carbon-components-svelte";
+  let theme = "g10";
+  let dark = false;
+  function toggle_theme() {
+    theme = dark ? "g10" : "g100";
+  }
   let query = "";
   let rows = [];
   let state = "onload";
@@ -24,14 +35,21 @@
     let response = await fetch(url);
     let data = await response.json();
     rows = data.results;
-    shown = data.results.length
+    shown = data.results.length;
     total = data.count;
     state = "completed";
   };
 </script>
 
-<div class="h-screen w-full">
+<Theme persist bind:theme>
+  <Header />
   <Content style="background: none; padding: 1rem">
+    <Toggle
+      labelText="Dark mode"
+      labelA="Off"
+      labelB="On"
+      bind:toggled={dark}
+      on:change={toggle_theme} />
     <Form on:submit={search}>
       <Search
         bind:value={query}
@@ -61,8 +79,8 @@
         }}
         title="Search Results"
         description="Displaying {shown} out of {total} results for your query."
-        headers={headers.map(x => ({key: x.toLowerCase(), value:  x }))}
+        headers={headers.map((x) => ({ key: x.toLowerCase(), value: x }))}
         {rows} />
     {/if}
   </Content>
-</div>
+</Theme>
