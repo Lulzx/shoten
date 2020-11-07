@@ -11,9 +11,22 @@
     RadioButtonGroup,
     RadioButton,
   } from "carbon-components-svelte";
-  import Header from "./components/Header.svelte";
+  import { Header } from "carbon-components-svelte";
+  import { ToggleSmall } from "carbon-components-svelte";
+
+  import { getContext } from "svelte";
   import Theme from "./components/Theme.svelte";
-  import { Toggle } from "carbon-components-svelte";
+  const ctx = getContext("Theme");
+
+  $: if (ctx) {
+    ctx.dark.subscribe((value) => {
+      console.log("dark mode?", value);
+    });
+    ctx.light.subscribe((value) => {
+      console.log("light mode?", value);
+    });
+    ctx.updateVar("--cds-productive-heading-06-font-size", "4rem");
+  }
   let theme = "g10";
   let dark = false;
   function toggle_theme() {
@@ -42,14 +55,14 @@
 </script>
 
 <Theme persist bind:theme>
-  <Header />
-  <Content style="background: none; padding: 1rem">
-    <Toggle
-      labelText="Dark mode"
-      labelA="Off"
-      labelB="On"
+  <Header company="Shoten" platformName="Book Search Engine" href="/">
+    <ToggleSmall
+      labelA=""
+      labelB=""
       bind:toggled={dark}
       on:change={toggle_theme} />
+  </Header>
+  <Content style="background: none; padding: 1rem">
     <Form on:submit={search}>
       <Search
         bind:value={query}
