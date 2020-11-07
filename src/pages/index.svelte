@@ -6,14 +6,10 @@
   import { Search } from "carbon-components-svelte";
   import { DataTable, DataTableSkeleton } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
-  import {
-    FormGroup,
-    RadioButtonGroup,
-    RadioButton,
-  } from "carbon-components-svelte";
+  import { FormGroup } from "carbon-components-svelte";
   import { Header } from "carbon-components-svelte";
   import { ToggleSmall } from "carbon-components-svelte";
-
+  import { ContentSwitcher, Switch } from "carbon-components-svelte";
   import { getContext } from "svelte";
   import Theme from "./components/Theme.svelte";
   const ctx = getContext("Theme");
@@ -70,11 +66,11 @@
         autofocus="true" />
     </Form>
     <FormGroup legendText="Filter (fields)">
-      <RadioButtonGroup labelPosition="right" selected={type}>
+      <ContentSwitcher selectedIndex={types.indexOf(type)} light="true">
         {#each types as k}
-          <RadioButton labelText={k} value={k} on:change={() => (type = k)} />
+          <Switch text={k} on:click={() => (type = k)} />
         {/each}
-      </RadioButtonGroup>
+      </ContentSwitcher>
     </FormGroup>
     {#if state === 'loading'}
       <DataTableSkeleton {headers} rows={3} />
