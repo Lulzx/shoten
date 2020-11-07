@@ -12,8 +12,13 @@
   import { ContentSwitcher, Switch } from "carbon-components-svelte";
   import { getContext } from "svelte";
   import Theme from "./components/Theme.svelte";
+  import { Icon } from "carbon-components-svelte";
+  import UserProfile16 from "carbon-icons-svelte/lib/UserProfile16";
+  import Network_216 from "carbon-icons-svelte/lib/Network_216";
+  import Calendar16 from "carbon-icons-svelte/lib/Calendar16";
+  import InformationSquare16 from "carbon-icons-svelte/lib/InformationSquare16";
+  let icons = [InformationSquare16, UserProfile16, Network_216, Calendar16];
   const ctx = getContext("Theme");
-
   $: if (ctx) {
     ctx.dark.subscribe((value) => {
       console.log("dark mode?", value);
@@ -68,7 +73,14 @@
     <FormGroup legendText="Filter (fields)">
       <ContentSwitcher selectedIndex={types.indexOf(type)} light="true">
         {#each types as k}
-          <Switch text={k} on:click={() => (type = k)} />
+          <Switch on:click={() => (type = k)}>
+            <div style="display: flex; align-items: center;">
+              <Icon
+                render={icons[types.indexOf(k)]}
+                style="margin-right: 0.5rem;" />
+              {k}
+            </div>
+          </Switch>
         {/each}
       </ContentSwitcher>
     </FormGroup>
