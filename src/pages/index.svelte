@@ -7,11 +7,7 @@
   import { DataTable } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
   import { DataTableSkeleton } from "carbon-components-svelte";
-  import {
-    FormGroup,
-    RadioButtonGroup,
-    RadioButton,
-  } from "carbon-components-svelte";
+  import { FormGroup, RadioButtonGroup, RadioButton } from "carbon-components-svelte";
   let query = "";
   let rows = [];
   let state = "onload";

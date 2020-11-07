@@ -41,6 +41,7 @@
     "typescript": "^3.9.3"
   },
   "dependencies": {
+    "@lottiefiles/svelte-lottie-player": "^0.1.4",
     "@roxi/routify": "^2.5.0",
     "cors": "^2.8.5",
     "execution-time": "^1.4.1",
