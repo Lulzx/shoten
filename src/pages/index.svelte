@@ -7,17 +7,19 @@
   import { DataTable, DataTableSkeleton } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
   import { FormGroup } from "carbon-components-svelte";
-  import { Header } from "carbon-components-svelte";
-  import { ToggleSmall } from "carbon-components-svelte";
+  import { Header,HeaderUtilities, HeaderGlobalAction } from "carbon-components-svelte";
   import { ContentSwitcher, Switch } from "carbon-components-svelte";
   import { getContext } from "svelte";
   import Theme from "./components/Theme.svelte";
   import { Icon } from "carbon-components-svelte";
-  import UserProfile16 from "carbon-icons-svelte/lib/UserProfile16";
-  import Network_216 from "carbon-icons-svelte/lib/Network_216";
-  import Calendar16 from "carbon-icons-svelte/lib/Calendar16";
-  import InformationSquare16 from "carbon-icons-svelte/lib/InformationSquare16";
-  let icons = [InformationSquare16, UserProfile16, Network_216, Calendar16];
+  import Sun24 from "carbon-icons-svelte/lib/Sun24";
+  import Moon24 from "carbon-icons-svelte/lib/Moon24";
+  import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
+  import Network_224 from "carbon-icons-svelte/lib/Network_224";
+  import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
+  import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
+
+  let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
   const ctx = getContext("Theme");
   $: if (ctx) {
     ctx.dark.subscribe((value) => {
@@ -30,8 +32,11 @@
   }
   let theme = "g10";
   let dark = false;
+  let theme_icon = Sun24;
   function toggle_theme() {
     theme = dark ? "g10" : "g100";
+    theme_icon = dark ? Sun24 : Moon24;
+    dark = !dark;
   }
   let query = "";
   let rows = [];
@@ -57,11 +62,10 @@
 
 <Theme persist bind:theme>
   <Header company="Shoten" platformName="Book Search Engine" href="/">
-    <ToggleSmall
-      labelA=""
-      labelB=""
-      bind:toggled={dark}
-      on:change={toggle_theme} />
+        <HeaderUtilities>
+    <!-- <HeaderActionSearch  on:inputSearch={search} /> -->
+    <HeaderGlobalAction aria-label="Settings" icon={theme_icon} on:click={toggle_theme}/>
+  </HeaderUtilities>
   </Header>
   <Content style="background: none; padding: 1rem">
     <Form on:submit={search}>
