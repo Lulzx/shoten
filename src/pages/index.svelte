@@ -78,7 +78,7 @@
     shown = data.results.length;
     total = data.count;
     if (total <= 25) {
-      pages = total;
+      pages = 1;
     } else {
       pages = parseInt(total / 25);
     }
