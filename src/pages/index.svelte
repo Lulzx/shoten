@@ -7,7 +7,11 @@
   import { DataTable, DataTableSkeleton } from "carbon-components-svelte";
   import { Form } from "carbon-components-svelte";
   import { FormGroup } from "carbon-components-svelte";
-  import { Header,HeaderUtilities, HeaderGlobalAction } from "carbon-components-svelte";
+  import {
+    Header,
+    HeaderUtilities,
+    HeaderGlobalAction,
+  } from "carbon-components-svelte";
   import { ContentSwitcher, Switch } from "carbon-components-svelte";
   import { getContext } from "svelte";
   import Theme from "./components/Theme.svelte";
@@ -18,6 +22,7 @@
   import Network_224 from "carbon-icons-svelte/lib/Network_224";
   import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
+  import { PaginationNav } from "carbon-components-svelte";
 
   let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
   const ctx = getContext("Theme");
@@ -38,7 +43,9 @@
     theme_icon = dark ? Sun24 : Moon24;
     dark = !dark;
   }
-  let query = "";
+  let page = 0;
+  let pages = 1;
+  let current_query = "";
   let rows = [];
   let state = "onload";
   let type = "title";
@@ -46,31 +53,55 @@
   let headers = [...types, "size"].map(
     (x) => x.charAt(0).toUpperCase() + x.slice(1)
   );
+  let previous_page = 0;
+  let previous_query = "";
   let shown, total;
   const search = async () => {
     state = "loading";
+    let current_page = page + 1;
+    if (!page) {
+      current_page = 1;
+    }
+    if (previous_page === current_page && previous_query === current_query) {
+      state = "completed";
+      return;
+    }
+    if (previous_query != current_query) {
+      current_page = 1;
+      page = 0;
+    }
     let base_url = "https://lulzx.herokuapp.com/query/";
-    let url = base_url + type + "/" + query;
+    let url = base_url + type + "/" + current_query + "/" + current_page;
     let response = await fetch(url);
     let data = await response.json();
     rows = data.results;
     shown = data.results.length;
     total = data.count;
+    if (total <= 25) {
+      pages = total;
+    } else {
+      pages = parseInt(total / 25);
+    }
+    previous_page = current_page;
+    previous_query = current_query;
     state = "completed";
   };
 </script>
 
 <Theme persist bind:theme>
   <Header company="Shoten" platformName="Book Search Engine" href="/">
-        <HeaderUtilities>
-    <!-- <HeaderActionSearch  on:inputSearch={search} /> -->
-    <HeaderGlobalAction aria-label="Settings" icon={theme_icon} on:click={toggle_theme}/>
-  </HeaderUtilities>
+    <HeaderUtilities>
+      <!-- <HeaderActionSearch  on:inputSearch={search} /> -->
+      <HeaderGlobalAction
+        aria-label="Settings"
+        icon={theme_icon}
+        on:click={toggle_theme} />
+    </HeaderUtilities>
   </Header>
   <Content style="background: none; padding: 1rem">
     <Form on:submit={search}>
       <Search
-        bind:value={query}
+        bind:value={current_query}
         placeholder="type book {type}..."
         autofocus="true" />
     </Form>
@@ -106,6 +137,13 @@
         description="Displaying {shown} out of {total} results for your query."
         headers={headers.map((x) => ({ key: x.toLowerCase(), value: x }))}
         {rows} />
+      <PaginationNav
+        bind:page
+        on:change={search}
+        total={pages}
+        on:click:button--previous={() => page}
+        on:click:button--next={() => page}
+        loop="true" />
     {/if}
   </Content>
 </Theme>

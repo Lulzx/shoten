@@ -9,8 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from audiobooker.scrappers.librivox import Librivox
 
 
-def search(query, search_type="title"):
-    search_request = SearchRequest(query, search_type)
+def search(query, search_type="title", page=0):
+    search_request = SearchRequest(query, search_type, page)
     return search_request.aggregate_request_data()
 
 
@@ -24,13 +24,16 @@ class SearchRequest:
     col_names = ["ID", "Author", "Title", "Publisher", "Year", "Pages", "Language", "Size", "Extension",
                  "Mirror_1", "Mirror_2", "Mirror_3", "Mirror_4", "Mirror_5", "Edit"]
 
-    def __init__(self, query, search_type="title"):
+    def __init__(self, query, search_type="title", page=0):
         self.query = query
         self.search_type = search_type
+        self.page = page
 
     def get_search_page(self):
         query_parsed = "%20".join(self.query.split(" "))
-        search_url = "http://gen.lib.rus.ec/search.php?req={}&column={}".format(query_parsed, self.search_type.lower())
+        page = self.page
+        search_url = "http://gen.lib.rus.ec/search.php?req={}&column={}&page={}".format(
+            query_parsed, self.search_type.lower(), page)
         search_page = requests.get(search_url)
         return search_page
 
@@ -39,6 +42,7 @@ class SearchRequest:
         soup = bs(search_page.text, 'lxml')
         strip_i_tag_from_soup(soup)
         information_table = soup.find_all('table')[2]
+        count = soup.find_all('font')[2].string.split('|')[0].split(' ')[0]
         raw_data = [
             [
                 td.a['href'] if td.find('a') and td.find('a').has_attr("title") and td.find('a')["title"] != ""
@@ -51,7 +55,7 @@ class SearchRequest:
         cols = ["id", "title", "author",
                 "publisher", "year", "size", "download"]
         output_data = [dict(zip(cols, self.sanitize(row))) for row in raw_data]
-        return json.dumps(output_data)
+        return json.dumps(output_data), count
 
     @staticmethod
     def sanitize(row):
@@ -90,19 +94,19 @@ async def root():
     return {"message": "Hello, World!"}
 
 
-@app.get("/query/{option}/{query}")
-async def read_item(option, query):
+@app.get("/query/{option}/{query}/{page}")
+async def read_item(option, query, page):
     start = time.time()
     query = query.lower()
-    result = str(search(query, option))
+    result = search(query, option, page)
     end = time.time()
     time_elapsed = str(end - start)
     if result == "[]":
         count = '0'
     else:
-        count = str(len(result))
+        count = str(result[1])
     data = '{"time": ' + time_elapsed + ', "results": ' + \
-           result + ', "count": "' + count + '"}'
+           result[0] + ', "count": "' + count + '"}'
     return Response(content=data, media_type="application/json")
 
 
