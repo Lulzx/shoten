@@ -49,7 +49,7 @@ An online eBook platform with a great reading experience and search interface.
 
 Then,
 ```
-git clone --depth=1 https://github.com/Lulzx/shoten-search.git
+git clone --depth=1 https://github.com/Lulzx/shoten.git
 cd shoten-search
 yarn install
 yarn dev:nollup
@@ -74,7 +74,7 @@ python -m uvicorn server:app --reload
 
 ## Roadmap
 
-See the [open issues](https://github.com/lulzx/shoten-search/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/lulzx/shoten/issues) for a list of proposed features (and known issues).
 
 ## Contributing
 
