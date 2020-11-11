@@ -52,25 +52,25 @@ class SearchRequest:
             # Skip row 0 as it is the headings row
             for row in information_table.find_all("tr")[1:]
         ]
-        cols = ["id", "title", "author",
-                "publisher", "year", "size", "download"]
+        cols = ["id", "author", "title",
+                "publisher", "year", "size", "extension", "download"]
         output_data = [dict(zip(cols, self.sanitize(row))) for row in raw_data]
         return json.dumps(output_data), count
 
     @staticmethod
     def sanitize(row):
-        indices = 5, 6, 8
+        indices = 5, 6
+        print(row)
         row = [i for j, i in enumerate(row[:10]) if j not in indices]
         row = [p.replace("'", "\'").replace('"', '\"') for p in row]
-        size = row[-2].split(' ')
+        size = row[-3].split(' ')
         val = size[0]
         ext = size[1]
         if ext == "Kb":
             val = float(val) / 1024
             ext = "Mb"
         size = "{:.2f} {}".format(round(float(val), 2), ext).replace(".00", "")
-        row[-2] = size
-        row[1], row[2] = row[2], row[1]
+        row[-3] = size
         return row
 
 

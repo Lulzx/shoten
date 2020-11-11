@@ -23,6 +23,7 @@
   import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
   import { PaginationNav } from "carbon-components-svelte";
+  import { Tag } from "carbon-components-svelte";
 
   let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
   const ctx = getContext("Theme");
@@ -50,9 +51,7 @@
   let state = "onload";
   let type = "title";
   let types = ["title", "author", "publisher", "year"];
-  let headers = [...types, "size"].map(
-    (x) => x.charAt(0).toUpperCase() + x.slice(1)
-  );
+  let headers = [...types, "size"];
   let previous_page = 0;
   let previous_query = "";
   let shown, total;
@@ -82,6 +81,7 @@
     } else {
       pages = parseInt(total / 25);
     }
+    let extension = data.extension;
     previous_page = current_page;
     previous_query = current_query;
     state = "completed";
@@ -135,14 +135,14 @@
         }}
         title="Search Results"
         description="Displaying {shown} out of {total} results for your query."
-        headers={headers.map((x) => ({ key: x.toLowerCase(), value: x }))}
+        headers={headers.map((x) => ({ key: x, value: x }))}
         {rows} />
       <PaginationNav
         bind:page
         on:change={search}
         total={pages}
-        on:click:button--previous={() => page}
-        on:click:button--next={() => page}
+        on:click:button--previous={page}
+        on:click:button--next={page}
         loop="true" />
     {/if}
   </Content>
