@@ -53,7 +53,6 @@
     justify-content: center;
     -webkit-box-align: center;
     align-items: center;
-    background: var(--color);
   }
   h1 {
     font-size: 35px;
