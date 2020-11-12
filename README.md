@@ -2,7 +2,6 @@
 
 An e-book platform for a great reading experience with a search interface to find books and audiobooks.
 
----
 
 ## 💭 Main ideas
 
