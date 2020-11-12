@@ -51,7 +51,7 @@
   let state = "onload";
   let type = "title";
   let types = ["title", "author", "publisher", "year"];
-  let headers = [...types, "size"];
+  let headers = [...types, "size", "extension"];
   let previous_page = 0;
   let previous_query = "";
   let shown, total;
@@ -81,7 +81,6 @@
     } else {
       pages = parseInt(total / 25);
     }
-    let extension = data.extension;
     previous_page = current_page;
     previous_query = current_query;
     state = "completed";
