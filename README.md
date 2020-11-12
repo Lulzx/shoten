@@ -1,6 +1,7 @@
 # 📚 Shoten
 
-An online eBook platform with a great reading experience and search interface.
+An e-book platform for a great reading experience with a search interface to find books and audiobooks.
+
 
 ## 💭 Main ideas
 
@@ -37,23 +38,38 @@ An online eBook platform with a great reading experience and search interface.
 - recently viewed
 - recommendations
 
+---
 
 ## Built with:
 
-- Svelte
-- FastAPI
+- [Svelte](http://svelte.dev/)
+- [FastAPI](https://fastapi.tiangolo.com/)
 
-## Deploy
 
-- Install NodeJS, Yarn and Python 3.8+
+## Installation
 
-Then,
-```
-git clone --depth=1 https://github.com/Lulzx/shoten.git
-cd shoten-search
-yarn install
-yarn dev:nollup
-```
+- Make sure to install [Node.js](https://nodejs.org/en/download/), [Yarn](https://yarnpkg.com/getting-started/install) and [Python](https://www.python.org/downloads/)
+
+1. **Clone the project**
+
+   ```sh
+    git clone --depth=1 https://github.com/Lulzx/shoten.git
+    cd shoten
+   ```
+
+2. **Install and run backend (http://localhost:8000)**
+
+    ```sh
+    pip install -r requirements.txt
+    python -m uvicorn server:app --reload
+    ```
+
+3. **Install and run frontend (http://localhost:5000)**
+
+    ```sh
+    yarn install
+    yarn dev:nollup
+    ```
 
 
 | Syntax           | Description                                                                       |
@@ -62,15 +78,9 @@ yarn dev:nollup
 | `dev:nollup`     | Development with crazy fast rebuilds (port 5000)                                  |
 | `build`          | Build a bundled app with SSR + prerendering and dynamic imports                   |
 | `serve`          | Run after a build to preview. Serves SPA on 5000 and SSR on 5005                  |
-| `export`         | Create static pages from content in dist folder (used by `npm run build`)         |
+| `export`         | Create static pages from content in dist folder (used by `yarn build`)            |
 
-
-- To run the API
-
-```
-pip install -r requirements.txt
-python -m uvicorn server:app --reload
-```
+---
 
 ## Roadmap
 
