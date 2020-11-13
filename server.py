@@ -159,7 +159,7 @@ async def book_info(code):
     except:
         description = " "
     data = prepare(dict(title=title, subtitle=subtitle, description=description, year=year, author=author,
-                           image=encoded_image_data, direct_url=direct_url))
+                        image=encoded_image_data, direct_url=direct_url))
     return Response(content=data, media_type="application/json")
 
 
@@ -167,5 +167,5 @@ async def book_info(code):
 async def read_item(query):
     book = Librivox.search_audiobooks(title=query)[0]
     data = prepare(dict(title=str(book.title), description=str(book.description),
-                           authors=str(book.authors[0]).split(',')[0], url=str(book.url), streams=book.streams))
+                        authors=str(book.authors[0]).split(',')[0], url=str(book.url), streams=book.streams))
     return Response(content=data, media_type="application/json")
