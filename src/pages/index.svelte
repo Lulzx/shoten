@@ -23,6 +23,7 @@
   import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
   import { PaginationNav } from "carbon-components-svelte";
+  import { onMount } from "svelte";
 
   let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
   const ctx = getContext("Theme");
@@ -84,6 +85,14 @@
     previous_query = current_query;
     state = "completed";
   };
+  onMount(async () => {
+    let url = "https://lulzx.herokuapp.com/";
+    let res = await fetch(url);
+    let data = await res.json();
+    if (data.message) {
+      console.log("Connection established!");
+    }
+  });
 </script>
 
 <style>
