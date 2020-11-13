@@ -130,7 +130,7 @@
   <Theme persist bind:theme>
     <Header company="Shoten" platformName="Book Search Engine" href="/">
       <HeaderUtilities>
-        <HeaderGlobalAction icon={theme_icon} on:click={toggle_theme} />
+        <HeaderGlobalAction aria-label="toggle theme" icon={theme_icon} on:click={toggle_theme} />
       </HeaderUtilities>
     </Header>
     <Content style="background: none; padding: 1rem">
