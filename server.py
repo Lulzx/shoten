@@ -1,12 +1,13 @@
+import base64
 import json
 import re
 import time
-import base64
+
 import requests
+from audiobooker.scrappers.librivox import Librivox
 from bs4 import BeautifulSoup as bs
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-from audiobooker.scrappers.librivox import Librivox
 
 
 def search(query, search_type="title", page=0):
@@ -55,12 +56,11 @@ class SearchRequest:
         cols = ["id", "author", "title",
                 "publisher", "year", "size", "extension", "download"]
         output_data = [dict(zip(cols, self.sanitize(row))) for row in raw_data]
-        return json.dumps(output_data), count
+        return [output_data, count]
 
     @staticmethod
     def sanitize(row):
         indices = 5, 6
-        print(row)
         row = [i for j, i in enumerate(row[:10]) if j not in indices]
         row = [p.replace("'", "\'").replace('"', '\"') for p in row]
         size = row[-3].split(' ')
@@ -72,6 +72,10 @@ class SearchRequest:
         size = "{:.2f} {}".format(round(float(val), 2), ext).replace(".00", "")
         row[-3] = size
         return row
+
+
+def prepare(result):
+    return json.dumps(result)
 
 
 app = FastAPI()
@@ -105,8 +109,8 @@ async def read_item(option, query, page):
         count = '0'
     else:
         count = str(result[1])
-    data = '{"time": ' + time_elapsed + ', "results": ' + \
-           result[0] + ', "count": "' + count + '"}'
+    result = result[0]
+    data = prepare(dict(time=time_elapsed, results=result, count=count))
     return Response(content=data, media_type="application/json")
 
 
@@ -116,6 +120,7 @@ async def book_info(code):
     base_url = "http://library.lol"
     link = base_url + "/main/" + code
     markup = requests.get(link).text
+    regex = '<[^<]+?>'
     soup = bs(markup, "lxml")
     image = base_url + soup.find("img")['src']
     response = requests.get(image).content
@@ -134,11 +139,11 @@ async def book_info(code):
         author_prefix = "Author"
         author = str(soup.select_one('p:contains({})'.format(
             author_prefix)))[14:]
-        author = re.sub('<[^<]+?>', '', author)
+        author = re.sub(regex, '', author)
     except:
         author = " "
     try:
-        year = re.sub('<[^<]+?>', '', str(soup.select_one('p:contains(Publisher)')).split(",")[
+        year = re.sub(regex, '', str(soup.select_one('p:contains(Publisher)')).split(",")[
             1].removeprefix(" Year: "))
     except IndexError:
         year = " "
@@ -147,22 +152,20 @@ async def book_info(code):
         description = str(soup.select_one('div:contains({})'.format(
             description_prefix))).removeprefix("<div>" + description_prefix + ":<br/>").removesuffix("</div>")
         description = description.replace("<br />", "")
-        description = re.sub('<[^<]+?>', '', description)
+        description = re.sub(regex, '', description)
         description = ' '.join(description.split())
         description = description.replace("'", "\'").replace('"', '')
         description = description.replace('\n', '')
     except:
         description = " "
-    data = '{"title": "' + title + '", "subtitle": "' + subtitle + \
-           '", "description": "' + description + '", "year": "' + \
-           year + '", "author": "' + author + '", "image": "' + \
-           encoded_image_data + '", "direct_url": "' + direct_url + '"}'
+    data = prepare(dict(title=title, subtitle=subtitle, description=description, year=year, author=author,
+                           image=encoded_image_data, direct_url=direct_url))
     return Response(content=data, media_type="application/json")
 
 
 @app.get("/vox/{query}")
 async def read_item(query):
     book = Librivox.search_audiobooks(title=query)[0]
-    data = '{"title": "' + str(book.title) + '", "description": "' + str(book.description) + '", "authors": "' + str(
-        book.authors) + '", "url": "' + str(book.url) + '", "streams": ' + str(book.streams).replace("'", '"') + '}'
+    data = prepare(dict(title=str(book.title), description=str(book.description),
+                           authors=str(book.authors[0]).split(',')[0], url=str(book.url), streams=book.streams))
     return Response(content=data, media_type="application/json")
