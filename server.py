@@ -14,8 +14,13 @@ requests_cache.install_cache('book_cache')
 
 
 def search(query, search_type="title", page=0):
+    query = query.lower()
+    start = time.time()
     search_request = SearchRequest(query, search_type, page)
-    return search_request.aggregate_request_data()
+    result = search_request.aggregate_request_data()
+    end = time.time()
+    time_elapsed = str(end - start)
+    return [time_elapsed] + result
 
 
 def strip_i_tag_from_soup(soup):
@@ -58,8 +63,10 @@ class SearchRequest:
         ]
         cols = ["id", "author", "title",
                 "publisher", "year", "size", "extension", "download"]
-        output_data = [dict(zip(cols, self.sanitize(row))) for row in raw_data]
-        return [output_data, count]
+        result = [dict(zip(cols, self.sanitize(row))) for row in raw_data]
+        if not result:
+            count = '0'
+        return [result, count]
 
     @staticmethod
     def sanitize(row):
@@ -103,16 +110,17 @@ async def root():
 
 @app.get("/query/{option}/{query}/{page}")
 async def read_item(option, query, page):
-    start = time.time()
-    query = query.lower()
     result = search(query, option, page)
-    end = time.time()
-    time_elapsed = str(end - start)
-    if result == "[]":
-        count = '0'
-    else:
-        count = str(result[1])
-    result = result[0]
+    if not result[1] and option == "title":
+        url = "https://www.googleapis.com/books/v1/volumes?q=" + query
+        data = requests.get(url).json()
+        if data['totalItems'] != 0:
+            query = data['items'][0]['volumeInfo']['title']
+            print(query)
+            result = search(query, option, page)
+    time_elapsed = str(result[0])
+    count = str(result[2])
+    result = result[1]
     data = prepare(dict(time=time_elapsed, results=result, count=count))
     return Response(content=data, media_type="application/json")
 
