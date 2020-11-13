@@ -1,10 +1,8 @@
 const cssnano = require('cssnano')({ preset: 'default' });
 
-const production = process.env.NODE_ENV === 'production';
+const production = true;
 
-module.exports = {
-  plugins: [
-    require('autoprefixer'),
-    ...(production ? [cssnano] : []),
-  ],
-};
+export const plugins = [
+  require('autoprefixer'),
+  ...(production ? [cssnano] : []),
+];

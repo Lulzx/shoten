@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 requests_cache.install_cache('book_cache')
 
+
 def search(query, search_type="title", page=0):
     search_request = SearchRequest(query, search_type, page)
     return search_request.aggregate_request_data()
@@ -124,10 +125,13 @@ async def book_info(code):
     markup = requests.get(link).text
     regex = '<[^<]+?>'
     soup = bs(markup, "lxml")
-    image = base_url + soup.find("img")['src']
-    response = requests.get(image).content
-    encoded_image_data = "data:image/png;base64," + \
-                         base64.b64encode(response).decode('utf-8')
+    try:
+        image = base_url + soup.find("img")['src']
+        response = requests.get(image).content
+        encoded_image_data = "data:image/png;base64," + \
+            base64.b64encode(response).decode('utf-8')
+    except:
+        encoded_image_data = "NO_IMAGE"
     try:
         direct_url = soup.select_one("a[href*=cloudflare]")["href"]
     except TypeError:

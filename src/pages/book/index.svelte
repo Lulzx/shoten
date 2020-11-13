@@ -26,7 +26,7 @@
     author = data.author;
     year = data.year;
     src = data.image;
-    if (!src) {
+    if (src === "NO_IMAGE") {
       src = "https://picsum.photos/312/500";
     }
     download = data.direct_url;
