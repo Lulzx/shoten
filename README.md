@@ -98,4 +98,4 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-For now, this project is proprietary, non-free or closed source application.
+This project is available in Public Domain, you're free to use it without any restrictions.
