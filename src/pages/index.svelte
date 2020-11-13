@@ -71,7 +71,9 @@
     }
     let base_url = "https://lulzx.herokuapp.com/query/";
     let url = base_url + type + "/" + current_query + "/" + current_page;
-    let response = await fetch(url);
+    let response = await fetch(url).catch((error) => {
+      console.error("Error:", error);
+    });
     let data = await response.json();
     rows = data.results;
     shown = data.results.length;
@@ -87,7 +89,9 @@
   };
   onMount(async () => {
     let url = "https://lulzx.herokuapp.com/";
-    let res = await fetch(url);
+    let res = await fetch(url).catch((error) => {
+      console.error("Error:", error);
+    });
     let data = await res.json();
     if (data.message) {
       console.log("Connection established!");
@@ -130,7 +134,10 @@
   <Theme persist bind:theme>
     <Header company="Shoten" platformName="Book Search Engine" href="/">
       <HeaderUtilities>
-        <HeaderGlobalAction aria-label="toggle theme" icon={theme_icon} on:click={toggle_theme} />
+        <HeaderGlobalAction
+          aria-label="toggle theme"
+          icon={theme_icon}
+          on:click={toggle_theme} />
       </HeaderUtilities>
     </Header>
     <Content style="background: none; padding: 1rem">

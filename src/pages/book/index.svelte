@@ -11,12 +11,14 @@
   onMount(async () => {
     let hash = new URL(window.location.href).searchParams.get("id");
     if (hash === null) {
-      console.log("md5 not found");
+      // console.log("md5 not found");
       return;
     }
     let base_url = "https://lulzx.herokuapp.com/book/";
     let url = base_url + hash;
-    let res = await fetch(url);
+    let res = await fetch(url).catch((error) => {
+      console.error("Error:", error);
+    });
     let data = await res.json();
     title = data.title;
     subtitle = data.subtitle;

@@ -16,13 +16,8 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
-    "@rollup/plugin-typescript": "^4.0.0",
-    "@tsconfig/svelte": "^1.0.0",
-    "@types/cors": "^2.8.8",
     "autoprefixer": "^9.8.6",
     "carbon-components-svelte": "^0.15.0",
-    "concurrently": "^5.2.0",
-    "cross-env": "^7.0.2",
     "cssnano": "^4.1.10",
     "nollup": "^0.13.3",
     "npm-run-all": "^4.1.5",
@@ -30,36 +25,22 @@
     "rollup-plugin-hot": "^0.0.31",
     "rollup-plugin-livereload": "^1.3.0",
     "rollup-plugin-postcss": "^3.1.8",
-    "rollup-plugin-svelte": "^5.2.3",
     "rollup-plugin-svelte-hot": "^0.10.0",
     "rollup-plugin-terser": "^6.1.0",
     "spassr": "^2.1.3",
     "svelte-check": "^1.0.0",
-    "svelte-preprocess": "^4.5.1",
-    "tailwindcss": "^1.8.12",
-    "tslib": "^2.0.0",
-    "typescript": "^3.9.3"
+    "svelte-preprocess": "^4.5.1"
   },
   "dependencies": {
     "@lottiefiles/svelte-lottie-player": "^0.1.4",
-    "@roxi/routify": "^2.5.0",
-    "@sideway/address": "^4.1.0",
+    "@roxi/routify": "^2.7.3",
     "canvas": "^2.6.1",
-    "chokidar": "3",
-    "core-js": "3",
-    "cors": "^2.8.5",
-    "execution-time": "^1.4.1",
-    "fastify": "^3.7.0",
     "fs-extra": "^9.0.1",
-    "joi": "^17.3.0",
-    "libgen": "^2.1.0",
     "postcss-import": "^12.0.1",
     "rollup-plugin-workbox": "^5.2.1",
-    "sass": "*",
+    "sass": "^1.29.0",
     "spank": "^1.4.0",
-    "svelte": "^3.29.4",
-    "tossr": "^1.3.1",
-    "workbox-cli": "^5.1.4"
+    "svelte": "^3.29.6"
   },
   "routify": {
     "extensions": "svelte,html,svx,md",
@@ -67,9 +48,7 @@
     "routifyDir": ".routify"
   },
   "spank": {
-    "blacklist": [
-      "/example/modal/basic/4"
-    ]
+    "blacklist": []
   },
   "license": "MIT"
 }
