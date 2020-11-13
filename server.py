@@ -1,24 +1,24 @@
-import base64
-import json
-import re
-import time
+from base64 import b64encode
+from json import dumps
+from re import sub
+from time import time
 
-import requests
-import requests_cache
+import fastapi.middleware.cors
 from audiobooker.scrappers.librivox import Librivox
 from bs4 import BeautifulSoup as bs
 from fastapi import FastAPI, Response
-from fastapi.middleware.cors import CORSMiddleware
+from requests import get
+from requests_cache import install_cache
 
-requests_cache.install_cache('book_cache')
+install_cache('book_cache')
 
 
 def search(query, search_type="title", page=0):
     query = query.lower()
-    start = time.time()
+    start = time()
     search_request = SearchRequest(query, search_type, page)
     result = search_request.aggregate_request_data()
-    end = time.time()
+    end = time()
     time_elapsed = str(end - start)
     return [time_elapsed] + result
 
@@ -43,7 +43,7 @@ class SearchRequest:
         page = self.page
         search_url = "http://gen.lib.rus.ec/search.php?req={}&column={}&page={}".format(
             query_parsed, self.search_type.lower(), page)
-        search_page = requests.get(search_url)
+        search_page = get(search_url)
         return search_page
 
     def aggregate_request_data(self):
@@ -85,7 +85,7 @@ class SearchRequest:
 
 
 def prepare(result):
-    return json.dumps(result)
+    return dumps(result)
 
 
 app = FastAPI()
@@ -95,7 +95,7 @@ origins = [
 ]
 
 app.add_middleware(
-    CORSMiddleware,
+    fastapi.middleware.cors.CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
@@ -113,7 +113,7 @@ async def read_item(option, query, page):
     result = search(query, option, page)
     if not result[1] and option == "title":
         url = "https://www.googleapis.com/books/v1/volumes?q=" + query
-        data = requests.get(url).json()
+        data = get(url).json()
         if data['totalItems'] != 0:
             query = data['items'][0]['volumeInfo']['title']
             print(query)
@@ -130,14 +130,14 @@ async def read_item(option, query, page):
 async def book_info(code):
     base_url = "http://library.lol"
     link = base_url + "/main/" + code
-    markup = requests.get(link).text
+    markup = get(link).text
     regex = '<[^<]+?>'
     soup = bs(markup, "lxml")
     try:
         image = base_url + soup.find("img")['src']
-        response = requests.get(image).content
+        response = get(image).content
         encoded_image_data = "data:image/png;base64," + \
-            base64.b64encode(response).decode('utf-8')
+                             b64encode(response).decode('utf-8')
     except:
         encoded_image_data = "NO_IMAGE"
     try:
@@ -153,11 +153,11 @@ async def book_info(code):
         author_prefix = "Author"
         author = str(soup.select_one('p:contains({})'.format(
             author_prefix)))[14:]
-        author = re.sub(regex, '', author)
+        author = sub(regex, '', author)
     except:
         author = " "
     try:
-        year = re.sub(regex, '', str(soup.select_one('p:contains(Publisher)')).split(",")[
+        year = sub(regex, '', str(soup.select_one('p:contains(Publisher)')).split(",")[
             1].removeprefix(" Year: "))
     except IndexError:
         year = " "
@@ -166,7 +166,7 @@ async def book_info(code):
         description = str(soup.select_one('div:contains({})'.format(
             description_prefix))).removeprefix("<div>" + description_prefix + ":<br/>").removesuffix("</div>")
         description = description.replace("<br />", "")
-        description = re.sub(regex, '', description)
+        description = sub(regex, '', description)
         description = ' '.join(description.split())
         description = description.replace("'", "\'").replace('"', '')
         description = description.replace('\n', '')
