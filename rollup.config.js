@@ -48,7 +48,7 @@ export default {
   preserveEntrySignatures: false,
   input: [`src/main.js`],
   output: {
-    sourcemap: false,
+    sourcemap: true,
     format: "esm",
     dir: buildDir,
   },
