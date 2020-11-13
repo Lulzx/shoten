@@ -16,4 +16,5 @@ py/__pycache__
 yarn-error.log
 TODO.md
 .idea/
+*.sqlite
 test.py

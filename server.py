@@ -4,11 +4,13 @@ import re
 import time
 
 import requests
+import requests_cache
 from audiobooker.scrappers.librivox import Librivox
 from bs4 import BeautifulSoup as bs
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
+requests_cache.install_cache('book_cache')
 
 def search(query, search_type="title", page=0):
     search_request = SearchRequest(query, search_type, page)
