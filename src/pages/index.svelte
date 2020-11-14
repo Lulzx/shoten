@@ -32,7 +32,13 @@
   if (themes.includes(persisted_theme)) {
     theme = persisted_theme;
   } else {
-    theme = "g10";
+    const darkModeOn = window.matchMedia("(prefers-color-scheme: dark)");
+    if (darkModeOn.matches) {
+      theme = "g100";
+      console.log(`Dark mode is ${darkModeOn ? "🌒 on" : "☀️ off"}.`);
+    } else {
+      theme = "g10";
+    }
   }
   let dark = theme === "g100";
   let theme_icon = !dark ? Sun24 : Moon24;
