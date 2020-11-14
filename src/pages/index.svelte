@@ -24,7 +24,7 @@
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
   import { PaginationNav } from "carbon-components-svelte";
   import { onMount } from "svelte";
-  
+
   let ref;
   let theme;
   let page = 0;
@@ -42,17 +42,32 @@
   let previous_query = "";
   let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
   const persisted_theme = localStorage.getItem("theme");
-  if (themes.includes(persisted_theme)) {
-    theme = persisted_theme;
-  } else {
-    const darkModeOn = window.matchMedia("(prefers-color-scheme: dark)");
-    if (darkModeOn.matches) {
-      theme = "g100";
-      console.log(`Dark mode is ${darkModeOn ? "🌒 on" : "☀️ off"}.`);
+  onMount(async () => {
+    ref.focus();
+    if (themes.includes(persisted_theme)) {
+      theme = persisted_theme;
     } else {
-      theme = "g10";
+      if (window.matchMedia) {
+        const darkModeOn = window.matchMedia("(prefers-color-scheme: dark)");
+        if (darkModeOn.matches) {
+          theme = "g100";
+          console.log(`Dark mode is ${darkModeOn ? "🌒 on" : "☀️ off"}.`);
+        }
+      } else {
+        theme = "g10";
+      }
     }
-  }
+    if (typeof window != "undefined") {
+      let url = "https://lulzx.herokuapp.com/";
+      let res = await fetch(url).catch((error) => {
+        console.error("Error:", error);
+      });
+      let data = await res.json();
+      if (data.message) {
+        console.log("feels good man!");
+      }
+    }
+  });
   let dark = theme === "g100";
   let theme_icon = !dark ? Sun24 : Moon24;
   function toggle_theme() {
@@ -96,17 +111,12 @@
     previous_query = current_query;
     state = "completed";
   };
-  onMount(async () => {
-    ref.focus();
-    let url = "https://lulzx.herokuapp.com/";
-    let res = await fetch(url).catch((error) => {
-      console.error("Error:", error);
-    });
-    let data = await res.json();
-    if (data.message) {
-      console.log("Connection established!");
+  function header_href() {
+    if (typeof window != "undefined") {
+      return "javascript:history.go()";
     }
-  });
+    return "/";
+  }
 </script>
 
 <style>
@@ -129,7 +139,7 @@
     <Header
       company="Shoten"
       platformName="Book Search Engine"
-      href="javascript:history.go(0)">
+      href={header_href}>
       <HeaderUtilities>
         <HeaderGlobalAction
           aria-label="toggle theme"

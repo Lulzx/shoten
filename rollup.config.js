@@ -10,7 +10,6 @@ import getConfig from "@roxi/routify/lib/utils/config";
 import autoPreprocess from "svelte-preprocess";
 import postcssImport from "postcss-import";
 import postcss from "rollup-plugin-postcss";
-import { injectManifest } from "rollup-plugin-workbox";
 
 const { distDir } = getConfig();
 const assetsDir = "./assets";
@@ -77,17 +76,8 @@ export default {
     !production && !isNollup && livereload(distDir), // refresh entire window when code is updated
     !production && isNollup && Hmr({ inMemory: true, public: assetsDir }), // refresh only updated code
     {
-      transform: (code) =>
-        code.replace("process.env.NODE_ENV", `"${process.env.NODE_ENV}"`),
+      transform: (code) => code.replace("process.env.NODE_ENV", "true"),
     },
-    injectManifest({
-      globDirectory: assetsDir,
-      globPatterns: ["**/*.{js,css,svg}", "__app.html"],
-      swSrc: `src/sw.js`,
-      swDest: `assets/build/serviceworker.js`,
-      maximumFileSizeToCacheInBytes: 10000000, // 10 MB,
-      mode: "production",
-    }),
     production && copyToDist(),
   ],
   watch: {
@@ -95,9 +85,8 @@ export default {
     buildDelay: 100,
   },
 
-  onwarn(warning, warn) {
+  onwarn(warning) {
     // suppress eval warnings
     if (warning.code === "EVAL") return;
-    // warn(warning);
   },
 };
