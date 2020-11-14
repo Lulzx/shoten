@@ -1,8 +1,8 @@
 <script>
   export let persist = false;
   export let persistKey = "theme";
-  export let theme = "white";
-  export const themes = ["white", "g10", "g90", "g100"];
+  export let theme = "g10";
+  export const themes = ["g10", "g100"];
 
   import { onMount, afterUpdate, setContext } from "svelte";
   import { writable, derived } from "svelte/store";

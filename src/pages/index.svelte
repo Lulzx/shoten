@@ -26,26 +26,24 @@
   import { onMount } from "svelte";
 
   let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
-  const ctx = getContext("Theme");
-  $: if (ctx) {
-    ctx.dark.subscribe((value) => {
-      console.log("dark mode?", value);
-    });
-    ctx.light.subscribe((value) => {
-      console.log("light mode?", value);
-    });
-    ctx.updateVar("--cds-productive-heading-06-font-size", "4rem");
+  let theme;
+  const themes = ["g10", "g100"];
+  const persisted_theme = localStorage.getItem("theme");
+  if (themes.includes(persisted_theme)) {
+    theme = persisted_theme;
+  } else {
+    theme = "g10";
   }
-  let theme = "g10";
-  let dark = false;
-  let theme_icon = Sun24;
+  let dark = theme === "g100";
+  let theme_icon = !dark ? Sun24 : Moon24;
   function toggle_theme() {
     theme = dark ? "g10" : "g100";
     theme_icon = dark ? Sun24 : Moon24;
     dark = !dark;
+    ref.focus();
   }
   let ref;
-  let autofocus;
+  let autofocus = true;
   let page = 0;
   let pages = 1;
   let current_query = "";
@@ -58,7 +56,7 @@
   let previous_query = "";
   let shown, total;
   const search = async () => {
-    if (!current_query){
+    if (!current_query) {
       return;
     }
     state = "loading";
@@ -94,7 +92,6 @@
   };
   onMount(async () => {
     ref.focus();
-    autofocus = true;
     let url = "https://lulzx.herokuapp.com/";
     let res = await fetch(url).catch((error) => {
       console.error("Error:", error);
