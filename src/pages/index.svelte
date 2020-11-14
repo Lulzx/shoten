@@ -24,10 +24,23 @@
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
   import { PaginationNav } from "carbon-components-svelte";
   import { onMount } from "svelte";
-
-  let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
+  
+  let ref;
   let theme;
+  let page = 0;
+  let pages = 1;
+  let rows = [];
+  let shown, total;
+  let type = "title";
+  let state = "onload";
+  let autofocus = true;
   const themes = ["g10", "g100"];
+  let types = ["title", "author", "publisher", "year"];
+  let headers = [...types, "size", "extension"];
+  let previous_page = 0;
+  let current_query = "";
+  let previous_query = "";
+  let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
   const persisted_theme = localStorage.getItem("theme");
   if (themes.includes(persisted_theme)) {
     theme = persisted_theme;
@@ -48,19 +61,6 @@
     dark = !dark;
     ref.focus();
   }
-  let ref;
-  let autofocus = true;
-  let page = 0;
-  let pages = 1;
-  let current_query = "";
-  let rows = [];
-  let state = "onload";
-  let type = "title";
-  let types = ["title", "author", "publisher", "year"];
-  let headers = [...types, "size", "extension"];
-  let previous_page = 0;
-  let previous_query = "";
-  let shown, total;
   const search = async () => {
     if (!current_query) {
       return;
