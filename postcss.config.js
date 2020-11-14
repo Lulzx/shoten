@@ -1,8 +1,6 @@
-const cssnano = require('cssnano')({ preset: 'default' });
+const cssnano = require("cssnano")({ preset: "advanced" });
 
-const production = true;
-
-export const plugins = [
-  require('autoprefixer'),
-  ...(production ? [cssnano] : []),
-];
+export default (options) => {
+  const plugins = [require("autoprefixer"), cssnano];
+  return plugins;
+};

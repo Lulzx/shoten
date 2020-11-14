@@ -13,7 +13,7 @@ import postcss from "rollup-plugin-postcss";
 
 const { distDir } = getConfig();
 const assetsDir = "./assets";
-const buildDir = `assets/build`;
+const buildDir = "./assets/build";
 const isNollup = !!process.env.NOLLUP;
 const production = !process.env.ROLLUP_WATCH;
 
@@ -26,15 +26,9 @@ const serve = () => ({
     const options = {
       assetsDir,
       entrypoint: `${assetsDir}/__app.html`,
-      script: `${buildDir}/main.js`,
+      script: `${buildDir}/main.ts`,
     };
     spassr({ ...options, port: 5000 });
-    spassr({
-      ...options,
-      ssr: true,
-      port: 5005,
-      ssrOptions: { inlineDynamicImports: true, dev: true },
-    });
   },
 });
 const copyToDist = () => ({
@@ -45,9 +39,9 @@ const copyToDist = () => ({
 
 export default {
   preserveEntrySignatures: false,
-  input: [`src/main.js`],
+  input: [`src/main.ts`],
   output: {
-    sourcemap: true,
+    sourcemap: false,
     format: "esm",
     dir: buildDir,
   },
@@ -56,7 +50,10 @@ export default {
     svelte({
       dev: !production, // run-time checks
       // Extract component CSS — better performance
-      css: (css) => css.write(`${buildDir}/bundle.css`),
+      emitCss: false,
+      css: async (css) => {
+        css.write(`${buildDir}/bundle.css`);
+      },
       hot: isNollup,
       preprocess: autoPreprocess({
         postcss: { plugins: [postcssImport()] },

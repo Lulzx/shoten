@@ -2,26 +2,27 @@
   import { metatags } from "@roxi/routify";
   metatags.title = "Shoten Search";
   metatags.description = "Book search engine";
-  import { Content } from "carbon-components-svelte";
-  import { Search } from "carbon-components-svelte";
-  import { DataTable } from "carbon-components-svelte";
-  import { Form } from "carbon-components-svelte";
-  import { FormGroup } from "carbon-components-svelte";
+  import Theme from "./components/Theme.svelte";
   import {
+    Icon,
+    Form,
+    Switch,
     Header,
+    Search,
+    Content,
+    DataTable,
+    FormGroup,
+    PaginationNav,
+    ContentSwitcher,
     HeaderUtilities,
     HeaderGlobalAction,
   } from "carbon-components-svelte";
-  import { ContentSwitcher, Switch } from "carbon-components-svelte";
-  import Theme from "./components/Theme.svelte";
-  import { Icon } from "carbon-components-svelte";
   import Sun24 from "carbon-icons-svelte/lib/Sun24";
   import Moon24 from "carbon-icons-svelte/lib/Moon24";
   import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
   import Network_224 from "carbon-icons-svelte/lib/Network_224";
   import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
-  import { PaginationNav } from "carbon-components-svelte";
   import { onMount } from "svelte";
 
   let ref;
@@ -180,9 +181,8 @@
           zebra
           on:click:row={({ detail }) => {
             let str = detail.download,
-              hash = str.split('main/')[1],
-              url = window.location.href + 'book?id=' + hash;
-            window.open(url);
+              hash = str.split('main/')[1];
+            window.location.href += 'book?id=' + hash;
           }}
           title="Search Results"
           description="Displaying {shown} out of {total} results for your query."
