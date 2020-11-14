@@ -119,6 +119,50 @@
 </script>
 
 <style>
+  @import url(https://fonts.googleapis.com/css?family=Righteous);
+
+  h1 {
+    display: flex;
+    top: 0.25em;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    font-family: "Righteous";
+    font-size: 12em;
+    text-shadow: 0.03em 0.03em 0 rgb(15, 98, 254);
+  }
+  h1:after {
+    content: attr(data-shadow);
+    position: absolute;
+    right: 0vw;
+    top: 0.06em;
+    left: 0.06em;
+    z-index: -1;
+    text-shadow: none;
+    background-image: linear-gradient(
+      45deg,
+      transparent 45%,
+      rgb(51, 51, 51) 45%,
+      rgb(44, 44, 44) 55%,
+      transparent 0
+    );
+    background-size: 0.05em 0.05em;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation: shad-anim 30s linear infinite;
+  }
+
+  @keyframes shad-anim {
+    0% {
+      background-position: 0 0;
+    }
+    0% {
+      background-position: 100% -100%;
+    }
+  }
   :global(.bx--header) {
     background-color: #161616;
   }
@@ -146,6 +190,9 @@
           on:click={toggle_theme} />
       </HeaderUtilities>
     </Header>
+    {#if state === 'onload'}
+      <h1 data-shadow="Shoten">Shoten</h1>
+    {/if}
     <Content style="background: none; padding: 1rem">
       <Form on:submit={search}>
         <Search
