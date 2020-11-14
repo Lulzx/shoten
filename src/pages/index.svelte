@@ -119,8 +119,6 @@
 </script>
 
 <style>
-  @import url(https://fonts.googleapis.com/css?family=Righteous);
-
   h1 {
     display: flex;
     top: 0.25em;
