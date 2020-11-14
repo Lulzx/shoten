@@ -13,7 +13,6 @@
     HeaderGlobalAction,
   } from "carbon-components-svelte";
   import { ContentSwitcher, Switch } from "carbon-components-svelte";
-  import { getContext } from "svelte";
   import Theme from "./components/Theme.svelte";
   import { Icon } from "carbon-components-svelte";
   import Sun24 from "carbon-icons-svelte/lib/Sun24";
@@ -33,7 +32,6 @@
   let shown, total;
   let type = "title";
   let state = "onload";
-  let autofocus = true;
   const themes = ["g10", "g100"];
   let types = ["title", "author", "publisher", "year"];
   let headers = [...types, "size", "extension"];
@@ -105,7 +103,6 @@
     return "/";
   }
   onMount(async () => {
-    ref.focus();
     if (typeof window != "undefined") {
       let url = "https://lulzx.herokuapp.com/";
       let res = await fetch(url).catch((error) => {
@@ -116,6 +113,7 @@
         console.log("feels good man!");
       }
     }
+    ref.focus();
   });
 </script>
 
@@ -153,7 +151,7 @@
           bind:ref
           bind:value={current_query}
           placeholder="type book {type}..."
-          bind:autofocus />
+          autofocus="true" />
       </Form>
       <FormGroup legendText="Filter (fields)">
         <ContentSwitcher selectedIndex={types.indexOf(type)}>
