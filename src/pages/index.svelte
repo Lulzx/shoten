@@ -44,6 +44,8 @@
     theme_icon = dark ? Sun24 : Moon24;
     dark = !dark;
   }
+  let ref;
+  let autofocus;
   let page = 0;
   let pages = 1;
   let current_query = "";
@@ -56,6 +58,9 @@
   let previous_query = "";
   let shown, total;
   const search = async () => {
+    if (!current_query){
+      return;
+    }
     state = "loading";
     let current_page = page + 1;
     if (!page) {
@@ -88,6 +93,8 @@
     state = "completed";
   };
   onMount(async () => {
+    ref.focus();
+    autofocus = true;
     let url = "https://lulzx.herokuapp.com/";
     let res = await fetch(url).catch((error) => {
       console.error("Error:", error);
@@ -103,22 +110,6 @@
   :global(.bx--header) {
     background-color: #161616;
   }
-  :global(.bx--content-switcher-btn:focus) {
-    box-shadow: inset 0 0 0 2px #ffffff;
-  }
-  :global(.bx--content-switcher--light .bx--content-switcher-btn) {
-    background-color: var(--cds-ui-01, #ffffff);
-  }
-  :global(.bx--content-switcher--light
-      .bx--content-switcher-btn.bx--content-switcher--selected) {
-    color: var(--cds-inverse-01, #ffffff);
-    background-color: var(--cds-ui-05, #161616);
-  }
-  :global(.bx--content-switcher--dark
-      .bx--content-switcher-btn.bx--content-switcher--selected) {
-    color: var(--cds-inverse-01, #000000);
-    background-color: var(--cds-ui-05, #161616);
-  }
   :global(.bx--header__action) {
     padding: revert;
   }
@@ -132,7 +123,10 @@
 
 {#if ['onload', 'completed'].includes(state)}
   <Theme persist bind:theme>
-    <Header company="Shoten" platformName="Book Search Engine" href="/">
+    <Header
+      company="Shoten"
+      platformName="Book Search Engine"
+      href="javascript:history.go(0)">
       <HeaderUtilities>
         <HeaderGlobalAction
           aria-label="toggle theme"
@@ -143,14 +137,21 @@
     <Content style="background: none; padding: 1rem">
       <Form on:submit={search}>
         <Search
+          bind:ref
           bind:value={current_query}
           placeholder="type book {type}..."
-          autofocus="true" />
+          bind:autofocus />
       </Form>
       <FormGroup legendText="Filter (fields)">
-        <ContentSwitcher selectedIndex={types.indexOf(type)} light="true">
+        <ContentSwitcher selectedIndex={types.indexOf(type)}>
           {#each types as k}
-            <Switch on:click={() => (type = k)}>
+            <Switch
+              on:mouseleave={() => {
+                ref.focus();
+              }}
+              on:click={() => {
+                type = k;
+              }}>
               <div style="display: flex; align-items: center;">
                 <Icon
                   render={icons[types.indexOf(k)]}
