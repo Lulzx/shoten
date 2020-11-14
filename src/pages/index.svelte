@@ -126,7 +126,7 @@
     justify-content: center;
     text-align: center;
     position: relative;
-    font-family: "Righteous";
+    font-weight: bold;
     font-size: 12em;
     text-shadow: 0.03em 0.03em 0 rgb(15, 98, 254);
   }
