@@ -1038,7 +1038,7 @@
           <Column>
             <h1>{title}</h1><br />
             <h2>{subtitle}</h2><br />
-            <h3>By <a href="#!">{author}</a> · {year}</h3><br />
+            <h3>By <a href="{window.location.origin + '?author=' + author}">{author}</a> · {year}</h3><br />
             <Accordion>
               <AccordionItem title="Description" open="true">
                 <p style="text-align:justify">{description_handler()}</p>
