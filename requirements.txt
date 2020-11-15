@@ -5,3 +5,4 @@ uvicorn
 aiofiles
 audiobooker
 beautifulsoup4
+pydantic
