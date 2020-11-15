@@ -94,7 +94,7 @@
     left: auto;
     right: 50%;
     position: absolute;
-    margin: 32px 0 0 0;
+    margin: 32px 0 0;
     zoom: 1.5;
   }
   .book .inner {
@@ -258,7 +258,6 @@
     -webkit-animation-name: page-18;
     animation-name: page-18;
   }
-
   @-webkit-keyframes page-0 {
     4% {
       -webkit-transform: rotateZ(0deg) translateX(-18px);
@@ -274,7 +273,6 @@
       transform: rotateZ(0deg) translateX(-18px);
     }
   }
-
   @keyframes page-0 {
     4% {
       -webkit-transform: rotateZ(0deg) translateX(-18px);
@@ -998,6 +996,7 @@
       transform: rotateZ(-90deg);
     }
   }
+
   :global(html) {
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
