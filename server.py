@@ -116,7 +116,6 @@ async def read_item(option, query, page):
         data = get(url).json()
         if data['totalItems'] != 0:
             query = data['items'][0]['volumeInfo']['title']
-            print(query)
             result = search(query, option, page)
     time_elapsed = str(result[0])
     count = str(result[2])
