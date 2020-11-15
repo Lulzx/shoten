@@ -1,48 +1,71 @@
+import time
 from base64 import b64encode
+from dataclasses import asdict
 from re import sub
-from time import time
+from typing import List
+from urllib.parse import urlencode
 
 import fastapi.middleware.cors
-import requests
+import httpx
 from audiobooker.scrappers.librivox import Librivox
 from bs4 import BeautifulSoup as bs
 from fastapi import FastAPI
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from requests_cache import install_cache
-
-install_cache('book_cache')
-
-
-class searchResult(BaseModel):
-    time: str
-    results: list
-    count: str
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.inmemory import InMemoryBackend
+from fastapi_cache.decorator import cache
+from pydantic import AnyUrl, BaseModel
+from pydantic.dataclasses import dataclass
 
 
-class bookInfo(BaseModel):
-    time: str
+@dataclass
+class LibGen:
+    req: str
+    column: str
+    page: int
+
+
+@dataclass
+class GoogleBooks:
+    q: str
+
+
+@dataclass
+class Result:
+    id: int
+    author: str
+    title: str
+    publisher: str
+    year: str
+    size: str
+    extension: str
+    download: AnyUrl
+
+
+@dataclass
+class SearchResult:
+    time_elapsed: float
+    results: list[Result]
+    count: int
+
+
+class BookInfo(BaseModel):
+    time_elapsed: float
     title: str
     subtitle: str
     description: str
     year: str
     author: str
     image: str
-    direct_url: str
+    direct_url: AnyUrl
 
 
-class audiobookInfo(BaseModel):
-    time: str
+class AudiobookInfo(BaseModel):
+    time_elapsed: float
     title: str
     description: str
     authors: str
     url: str
-    streams: list
-
-
-col_names = ["ID", "Author", "Title", "Publisher", "Year", "Pages", "Language", "Size", "Extension",
-             "Mirror_1", "Mirror_2", "Mirror_3", "Mirror_4", "Mirror_5", "Edit"]
+    streams: List[str]
 
 
 def sanitize(row):
@@ -60,90 +83,96 @@ def sanitize(row):
     return row
 
 
-def search(query, search_type="title", page=0):
-    start = time()
-    query = query.lower()
-    query_parsed = "%20".join(query.split(" "))
-    search_url = f"http://gen.lib.rus.ec/search.php?req={query_parsed}&column={search_type.lower()}&page={page}"
-    search_page = requests.get(search_url)
+async def search(query: str = "", search_type: str = "title", page: int = 0):
+    start = time.time()
+    params = LibGen(req=query, column=search_type, page=page)
+    query_string = urlencode(asdict(params), doseq=True)
+    search_url = f"http://gen.lib.rus.ec/search.php?{query_string}"
+    async with httpx.AsyncClient() as client:
+        search_page = await client.get(search_url)
     soup = bs(search_page.text, 'lxml')
     subheadings = soup.find_all("i")
     for subheading in subheadings:
         subheading.decompose()
     try:
         information_table = soup.find_all('table')[2]
-    except IndexError:
-        return ['0', [], '0']
-    count = soup.find_all('font')[2].string.split('|')[0].split(' ')[0]
-    raw_data = [
-        [
-            td.a['href'] if td.find('a') and td.find('a').has_attr("title") and td.find('a')["title"] != ""
-            else ''.join(td.stripped_strings)
-            for td in row.find_all("td")
+        count = soup.find_all('font')[2].string.split('|')[0].split(' ')[0]
+        raw_data = [
+            [
+                td.a['href'] if td.find('a') and td.find('a').has_attr("title") and td.find('a')["title"] != ""
+                else ''.join(td.stripped_strings)
+                for td in row.find_all("td")
+            ]
+            for row in information_table.find_all("tr")[1:]
         ]
-        for row in information_table.find_all("tr")[1:]
-    ]
-    cols = ["id", "author", "title",
-            "publisher", "year", "size", "extension", "download"]
-    result = [dict(zip(cols, sanitize(row))) for row in raw_data]
-    if not result:
-        count = '0'
-    end = time()
-    time_elapsed = str(end - start)
-    response = [time_elapsed, result, count]
+        cols = ["id", "author", "title",
+                "publisher", "year", "size", "extension", "download"]
+        result = [dict(zip(cols, sanitize(row))) for row in raw_data]
+    except:
+        count = 0
+        result = []
+    end = time.time()
+    time_elapsed = end - start
+    response = dict(time_elapsed=time_elapsed, results=result, count=count)
     return response
 
 
 app = FastAPI()
 
-origins = [
-    "*"
-]
-
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
+@cache()
+async def get_cache():
+    return True
+
+
 @app.get("/")
+@cache(expire=99)
 async def root():
     return {"message": "Hello, World!"}
 
 
-@app.get("/query/{option}/{query}/{page}")
-async def read_item(option, query, page):
-    result = search(query, option, page)
-    if not result[1] and option == "title":
-        url = "https://www.googleapis.com/books/v1/volumes?q=" + query
-        data = requests.get(url).json()
+@app.get("/query/{search_type}/{query}/{page}", response_model=SearchResult)
+@cache(expire=99)
+async def read_item(search_type: str, query: str, page: int):
+    result = await search(query, search_type, page)
+    if not result['results'] and search_type == "title":
+        params = GoogleBooks(q=query)
+        query_string = urlencode(asdict(params), doseq=True)
+        url = f"https://www.googleapis.com/books/v1/volumes?{query_string}"
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+        data = response.json()
         if data['totalItems'] != 0:
             query = data['items'][0]['volumeInfo']['title']
-            result = search(query, option, page)
-    time_elapsed = str(result[0])
-    count = str(result[2])
-    result = result[1]
-    data = dict(time=time_elapsed, results=result, count=count)
-    data = jsonable_encoder(searchResult(**data))
-    return JSONResponse(content=data)
+            result = await search(query, search_type, page)
+    return result
 
 
-@app.get("/book/{code}")
-async def book_info(code):
-    start = time()
+@app.get("/book/{code}", response_model=BookInfo)
+@cache(expire=99)
+async def book_info(code: str):
+    start = time.time()
+    regex: str = '<[^<]+?>'
     base_url = "http://library.lol"
     link = base_url + "/main/" + code
-    markup = requests.get(link).text
-    regex = '<[^<]+?>'
+    client = httpx.AsyncClient()
+    response = await client.get(link)
+    markup = response.text
     soup = bs(markup, "lxml")
     try:
         image = base_url + soup.find("img")['src']
-        response = requests.get(image).content
+        response = await client.get(image)
         encoded_image_data = "data:image/png;base64," + \
-                             b64encode(response).decode('utf-8')
+                             b64encode(response.content).decode('utf-8')
+        await client.aclose()
     except:
         encoded_image_data = "NO_IMAGE"
     try:
@@ -152,7 +181,7 @@ async def book_info(code):
         direct_url = soup.select_one("a[href*=main]")["href"]
     heading = soup.find("h1").text.split(":")
     title = heading[0]
-    subtitle = " "
+    subtitle = ""
     if len(heading) > 1:
         subtitle = heading[1].strip()
     try:
@@ -161,12 +190,12 @@ async def book_info(code):
             author_prefix)))[14:]
         author = sub(regex, '', author)
     except:
-        author = " "
+        author = ""
     try:
         year = sub(regex, '', str(soup.select_one('p:contains(Publisher)')).split(",")[
             1].removeprefix(" Year: "))
     except IndexError:
-        year = " "
+        year = ""
     try:
         description_prefix = "Description"
         description = str(soup.select_one('div:contains({})'.format(
@@ -177,22 +206,28 @@ async def book_info(code):
         description = description.replace("'", "\'").replace('"', '')
         description = description.replace('\n', '')
     except:
-        description = " "
-    end = time()
-    time_elapsed = str(end - start)
-    data = dict(time=time_elapsed, title=title, subtitle=subtitle, description=description, year=year, author=author,
-                image=encoded_image_data, direct_url=direct_url)
-    data = jsonable_encoder(bookInfo(**data))
-    return JSONResponse(content=data)
+        description = ""
+    end = time.time()
+    time_elapsed = end - start
+    result = dict(time_elapsed=time_elapsed, title=title, subtitle=subtitle,
+                  description=description, year=year, author=author,
+                  image=encoded_image_data, direct_url=direct_url)
+    return result
 
 
-@app.get("/vox/{query}")
-async def read_item(query):
-    start = time()
+@app.get("/vox/{query}", response_model=AudiobookInfo)
+@cache(expire=99)
+async def read_item(query: str):
+    start = time.time()
     book = Librivox.search_audiobooks(title=query)[0]
-    end = time()
-    time_elapsed = str(end - start)
-    data = dict(time=time_elapsed, title=str(book.title), description=str(book.description),
-                authors=str(book.authors[0]).split(',')[0], url=str(book.url), streams=book.streams)
-    data = jsonable_encoder(audiobookInfo(**data))
-    return JSONResponse(content=data)
+    authors = str(book.authors[0]).split(',')[0]
+    end = time.time()
+    time_elapsed = end - start
+    result = dict(time_elapsed=time_elapsed, title=book.title, description=book.description,
+                  authors=authors, url=book.url, streams=book.streams)
+    return result
+
+
+@app.on_event("startup")
+async def startup():
+    FastAPICache.init(InMemoryBackend(), prefix="fastapi-cache")
