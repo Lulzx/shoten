@@ -93,18 +93,29 @@
     } else {
       pages = parseInt(total / 25);
     }
+    if (typeof window != "undefined") {
+      let nextState = "?" + type + "=" + current_query;
+      window.history.replaceState("", "", nextState);
+    }
     previous_page = current_page;
     previous_query = current_query;
     state = "completed";
   };
-  function header_href() {
-    if (typeof window != "undefined") {
-      return "javascript:history.go()";
-    }
-    return "/";
-  }
   onMount(async () => {
     if (typeof window != "undefined") {
+      let location = new URL(window.location.href);
+      if (location.search != "") {
+        let current_type;
+        for (let x of types) {
+          if (location.searchParams.has(x)) {
+            current_type = x;
+            type = current_type;
+            break;
+          }
+        }
+        current_query = location.searchParams.get(current_type);
+        search();
+      }
       let url = "https://lulzx.herokuapp.com/";
       let res = await fetch(url).catch((error) => {
         console.error("Error:", error);
@@ -180,7 +191,10 @@
     <Header
       company="Shoten"
       platformName="Book Search Engine"
-      href={header_href()}>
+      on:click={() => {
+        window.location.href = '/';
+      }}
+      href="/">
       <HeaderUtilities>
         <HeaderGlobalAction
           aria-label="toggle theme"
@@ -219,15 +233,15 @@
           {/each}
         </ContentSwitcher>
       </FormGroup>
-      <!-- <DataTableSkeleton {headers} rows={3} /> -->
       {#if state === 'completed'}
         <DataTable
           sortable
           zebra
           on:click:row={({ detail }) => {
             let str = detail.download,
-              hash = str.split('main/')[1];
-            window.location.href += 'book?id=' + hash;
+              hash = str.split('main/')[1],
+              book_url = window.location.origin + '/book?id=' + hash;
+            window.open(book_url, '_blank');
           }}
           title="Search Results"
           description="Displaying {shown} out of {total} results for your query."
