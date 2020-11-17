@@ -60,6 +60,8 @@ An e-book platform for a great reading experience with a search interface to fin
 2. **Install and run backend (http://localhost:8000)**
 
     ```sh
+    git clone --depth=1 https://github.com/Lulzx/shoten-backend.git
+    cd shoten-backend
     pip install -r requirements.txt
     python -m uvicorn server:app --reload
     ```
