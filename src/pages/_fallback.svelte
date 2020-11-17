@@ -18,7 +18,6 @@
   loop="{true}"
   controls="{true}"
   renderer="svg"
-  background="transparent"
   height="{600}"
   width="{600}"
   controlsLayout="false"

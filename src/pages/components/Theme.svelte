@@ -4,35 +4,14 @@
   export let theme = "g10";
   export const themes = ["g10", "g100"];
 
-  import { onMount, afterUpdate, setContext } from "svelte";
-  import { writable, derived } from "svelte/store";
+  import { afterUpdate} from "svelte";
+  import { writable } from "svelte/store";
 
   const isValidTheme = (value) => themes.includes(value);
   const isDark = (value) =>
     isValidTheme(value) && (value === "g90" || value === "g100");
 
   const dark = writable(isDark(theme));
-  const light = derived(dark, (_) => !_);
-
-  setContext("Theme", {
-    updateVar: (name, value) => {
-      document.documentElement.style.setProperty(name, value);
-    },
-    dark,
-    light,
-  });
-
-  onMount(() => {
-    try {
-      const persisted_theme = localStorage.getItem(persistKey);
-
-      if (isValidTheme(persisted_theme)) {
-        theme = persisted_theme;
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  });
 
   afterUpdate(() => {
     if (isValidTheme(theme)) {

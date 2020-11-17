@@ -20,16 +20,16 @@
       console.error("Error:", error);
     });
     let data = await res.json();
-    title = data.title;
-    subtitle = data.subtitle;
-    description = data.description;
-    author = data.author;
-    year = data.year;
-    src = data.image;
+    title = data["title"];
+    subtitle = data["subtitle"];
+    description = data["description"];
+    author = data["author"];
+    year = data["year"];
+    src = data["image"];
     if (src === "NO_IMAGE") {
       src = "https://picsum.photos/312/500";
     }
-    download = data.direct_url;
+    download = data["direct_url"];
     loading = false;
   });
   function description_handler() {
@@ -76,12 +76,10 @@
 
   .paper {
     padding: 26px;
-    margin: 26px auto;
     background: white;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
-    margin-left: min(50%, 75px);
-    margin-right: min(50%, 75px);
+    margin: 26px min(50%, 75px);
   }
 
   .book {

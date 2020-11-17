@@ -1,7 +1,7 @@
 <!-- 
 Here we will have an interface for the audiobooks
 we will fetch the books available in public domain
-on librevox website.
+on libre vox website.
 
 components for inspiration:
 
@@ -101,7 +101,7 @@ total tracks:
   disabled={current > audioTracks.length - 2} />
 <hr />
 <!-- svelte-ignore a11y-media-has-caption -->
-<audio controls src={audioTracks[current]} style="display:none;" />
+<!--<audio controls src={audioTracks[current]} style="display:none;"></audio>-->
 <StructuredList selection selected="row-1-value">
   <StructuredListHead>
     <StructuredListRow head>

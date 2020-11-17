@@ -35,8 +35,7 @@ h1 {
     loop={true}
     controls={true}
     renderer="svg"
-    background="transparent"
-    height={500}
+  height={500}
     width={500}
     controlsLayout="false"
     align="center" />
@@ -49,7 +48,6 @@ h1 {
     loop={true}
     controls={true}
     renderer="svg"
-    background="transparent"
     height={500}
     width={500}
     controlsLayout="false"

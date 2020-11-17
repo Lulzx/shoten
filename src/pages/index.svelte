@@ -75,7 +75,7 @@
       state = "completed";
       return;
     }
-    if (previous_query != current_query) {
+    if (previous_query !== current_query) {
       current_page = 1;
       page = 0;
     }
@@ -85,13 +85,13 @@
       console.error("Error:", error);
     });
     let data = await response.json();
-    rows = data.results;
-    shown = data.results.length;
-    total = data.count;
+    rows = data["results"];
+    total = data["count"];
+    shown = rows.length;
     if (total <= 25) {
       pages = 1;
     } else {
-      pages = parseInt(total / 25);
+      pages = ~~(total / 25);
     }
     if (typeof window != "undefined") {
       let nextState = "?" + type + "=" + current_query;
@@ -104,7 +104,7 @@
   onMount(async () => {
     if (typeof window != "undefined") {
       let location = new URL(window.location.href);
-      if (location.search != "") {
+      if (location.search !== "") {
         let current_type;
         for (let x of types) {
           if (location.searchParams.has(x)) {
@@ -114,14 +114,14 @@
           }
         }
         current_query = location.searchParams.get(current_type);
-        search();
+        await search();
       }
       let url = "https://lulzx.herokuapp.com/";
       let res = await fetch(url).catch((error) => {
         console.error("Error:", error);
       });
       let data = await res.json();
-      if (data.message) {
+      if (data["message"]) {
         console.log("feels good man!");
       }
     }
@@ -144,7 +144,7 @@
   h1:after {
     content: attr(data-shadow);
     position: absolute;
-    right: 0vw;
+    right: 0;
     top: 0.06em;
     left: 0.06em;
     z-index: -1;
@@ -157,7 +157,7 @@
       transparent 0
     );
     background-size: 0.05em 0.05em;
-    background-clip: text;
+    background-clip: initial;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 
@@ -258,5 +258,5 @@
     </Content>
   </Theme>
 {:else if state === 'loading'}
-  <div id="search" />
+  <div id="search"></div>
 {/if}
