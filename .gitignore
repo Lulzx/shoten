@@ -21,3 +21,4 @@ test.py
 Pipfile
 Pipfile.lock
 venv/
+/shoten-backend/
