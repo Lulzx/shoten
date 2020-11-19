@@ -106,6 +106,7 @@
       let location = new URL(window.location.href);
       if (location.search !== "") {
         let current_type;
+        state = "loading";
         for (let x of types) {
           if (location.searchParams.has(x)) {
             current_type = x;
@@ -118,7 +119,7 @@
       }
       let url = "https://lulzx.herokuapp.com/";
       let res = await fetch(url).catch((error) => {
-        console.error("Error:", error);
+        console.error(error);
       });
       let data = await res.json();
       if (data["message"]) {

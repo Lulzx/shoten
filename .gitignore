@@ -22,3 +22,4 @@ Pipfile
 Pipfile.lock
 venv/
 /shoten-backend/
+playground/
