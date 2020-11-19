@@ -101,7 +101,6 @@
     const data = await retrieve<info[]>(url)
     rows = data['results']
     total = data['count']
-    console.log(rows, total)
     if (total <= 25) {
       pages = 1
     } else {
@@ -137,6 +136,7 @@
         .catch((error) => {
           console.error(error)
         })
+      ref.focus()
     }
   })
 </script>
