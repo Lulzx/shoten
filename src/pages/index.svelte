@@ -32,7 +32,7 @@
   let rows = [];
   let shown, total;
   let type = "title";
-  let state = "onload";
+  let state;
   const themes = ["g10", "g100"];
   let types = ["title", "author", "publisher", "year"];
   let headers = [...types, "size", "extension"];
@@ -116,6 +116,9 @@
         }
         current_query = location.searchParams.get(current_type);
         await search();
+      }
+      else {
+        state = "onload";
       }
       let url = "https://lulzx.herokuapp.com/";
       let res = await fetch(url).catch((error) => {
