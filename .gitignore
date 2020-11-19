@@ -6,7 +6,6 @@
 .routify
 .netlify
 assets/build
-yarn.lock
 .vscode
 *.yaml
 *.pyc
