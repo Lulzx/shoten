@@ -17,7 +17,7 @@
     let base_url = "https://lulzx.herokuapp.com/book/";
     let url = base_url + hash;
     let res = await fetch(url).catch((error) => {
-      console.error("Error:", error);
+      console.error(error);
     });
     let data = await res.json();
     title = data["title"];

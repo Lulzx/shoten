@@ -1,7 +1,6 @@
-<!-- App.svelte -->
+<!-- App.svelte
 <script>
   import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
-
 </script>
   <style>
     div {
@@ -23,3 +22,5 @@
   controlsLayout="false"
   align="center"
 /></div>
+-->
+404 - Page Not Found

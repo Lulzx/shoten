@@ -5,7 +5,6 @@
 
 <style lang="scss" global>
   @import "../assets/global.css";
-  // @import "carbon-components-svelte/css/all";
   @import "../assets/custom.scss";
 </style>
 
