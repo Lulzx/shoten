@@ -1,48 +1,68 @@
-<script>
-  import { Grid, Row, Column } from "carbon-components-svelte";
-  import Download32 from "carbon-icons-svelte/lib/Download32";
-  import { Button } from "carbon-components-svelte";
-  import { Accordion, AccordionItem } from "carbon-components-svelte";
-  import { onMount } from "svelte";
+<script lang="ts">
+  import { Grid, Row, Column } from 'carbon-components-svelte'
+  import Download32 from 'carbon-icons-svelte/lib/Download32'
+  import { Button } from 'carbon-components-svelte'
+  import { Accordion, AccordionItem } from 'carbon-components-svelte'
+  import { onMount } from 'svelte'
 
-  let loading = true;
-  let title, subtitle, description, author, year, src, download;
+  let loading = true
+  let open = true
+
+  let title: string,
+    subtitle: string,
+    description: string,
+    author: string,
+    year: string,
+    src: string,
+    download: string
+
+  async function retrieve<T>(request: RequestInfo): Promise<T> {
+    const response = await fetch(request)
+    const body = await response.json()
+    return body
+  }
+
+  interface book {
+    title: string
+    subtitle: string
+    description: string
+    year: string
+    author: string
+    image: string
+    direct_url: string
+  }
 
   onMount(async () => {
-    let hash = new URL(window.location.href).searchParams.get("id");
+    let hash = new URL(window.location.href).searchParams.get('id')
     if (hash === null) {
-      // console.log("md5 not found");
-      return;
+      return
     }
-    let base_url = "https://lulzx.herokuapp.com/book/";
-    let url = base_url + hash;
-    let res = await fetch(url).catch((error) => {
-      console.error(error);
-    });
-    let data = await res.json();
-    title = data["title"];
-    subtitle = data["subtitle"];
-    description = data["description"];
-    author = data["author"];
-    year = data["year"];
-    src = data["image"];
-    if (src === "NO_IMAGE") {
-      src = "https://picsum.photos/312/500";
+    let base_url = 'https://lulzx.herokuapp.com/book/'
+    let url = base_url + hash
+    const data = await retrieve<book[]>(url)
+    title = data['title']
+    subtitle = data['subtitle']
+    description = data['description']
+    author = data['author']
+    year = data['year']
+    src = data['image']
+    if (src === 'NO_IMAGE') {
+      src = 'https://picsum.photos/312/500'
     }
-    download = data["direct_url"];
-    loading = false;
-  });
+    download = data['direct_url']
+    loading = false
+  })
   function description_handler() {
-    let remaining_chars = 500;
-    let accordion_text = "";
-    let description_list = description.split(".");
+    let remaining_chars = 500
+    let accordion_text = ''
+    let description_list = description.split('.')
     for (let i of description_list) {
       if (i.length < remaining_chars) {
-        accordion_text += i + ".";
-        remaining_chars -= i.length;
+        accordion_text += i + '.'
+        remaining_chars -= i.length
       }
     }
-    return accordion_text;
+    return accordion_text
   }
 </script>
 
@@ -117,7 +137,7 @@
   }
   .book .inner .left:before,
   .book .inner .right:before {
-    content: "";
+    content: '';
     width: 48px;
     height: 4px;
     border-radius: 2px;
@@ -1031,13 +1051,24 @@
     <div class="paper">
       <Grid>
         <Row>
-          <Column><img {src} alt={subtitle} /></Column>
           <Column>
-            <h1>{title}</h1><br />
-            <h2>{subtitle}</h2><br />
-            <h3>By <a href="{window.location.origin + '?author=' + author}">{author}</a> · {year}</h3><br />
+            <img {src} alt={subtitle} />
+          </Column>
+          <Column>
+            <h1>{title}</h1>
+            <br />
+            <h2>{subtitle}</h2>
+            <br />
+            <h3>
+              By
+              <a href={window.location.origin + '?author=' + author}>
+                {author}
+              </a>
+              · {year}
+            </h3>
+            <br />
             <Accordion>
-              <AccordionItem title="Description" open="true">
+              <AccordionItem title="Description" bind:open>
                 <p style="text-align:justify">{description_handler()}</p>
               </AccordionItem>
             </Accordion>
