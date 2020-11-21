@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { metatags } from '@roxi/routify'
-  import Theme from './components/Theme.svelte'
+  import { metatags } from "@roxi/routify";
+  import Theme from "./components/Theme.svelte";
   import {
     Content,
     ContentSwitcher,
@@ -14,131 +14,132 @@
     PaginationNav,
     Search,
     Switch,
-  } from 'carbon-components-svelte'
-  import Sun24 from 'carbon-icons-svelte/lib/Sun24'
-  import Moon24 from 'carbon-icons-svelte/lib/Moon24'
-  import UserProfile24 from 'carbon-icons-svelte/lib/UserProfile24'
-  import Network_224 from 'carbon-icons-svelte/lib/Network_224'
-  import Calendar24 from 'carbon-icons-svelte/lib/Calendar24'
-  import InformationSquare24 from 'carbon-icons-svelte/lib/InformationSquare24'
-  import { onMount } from 'svelte'
+  } from "carbon-components-svelte";
+  import Sun24 from "carbon-icons-svelte/lib/Sun24";
+  import Moon24 from "carbon-icons-svelte/lib/Moon24";
+  import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
+  import Network_224 from "carbon-icons-svelte/lib/Network_224";
+  import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
+  import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
+  import { onMount } from "svelte";
 
-  metatags.title = 'Shoten Search'
-  metatags.description = 'Book search engine'
+  metatags.title = "Shoten Search";
+  metatags.description = "Book search engine";
 
-  let ref: HTMLInputElement
-  let theme: string
-  let page: any = 0
-  let pages: number = 1
-  let rows: any[] = []
-  let total: number
-  let type: string = 'title'
-  let state: string = 'onload'
-  let autofocus: boolean = true
-  const themes: string[] = ['g10', 'g100']
-  let types: string[] = ['title', 'author', 'publisher', 'year']
-  let headers: string[] = [...types, 'size', 'extension']
-  let previous_page: number = 0
-  let current_query: string = ''
-  let previous_query: string = ''
+  let ref: HTMLInputElement;
+  let theme: string;
+  let page: any = 0;
+  let pages: number = 1;
+  let rows: any[] = [];
+  let total: number;
+  let type: string = "title";
+  let state: string = "onload";
+  let autofocus: boolean = true;
+  const themes: string[] = ["g10", "g100"];
+  let types: string[] = ["title", "author", "publisher", "year"];
+  let headers: string[] = [...types, "size", "extension"];
+  let previous_page: number = 0;
+  let current_query: string = "";
+  let previous_query: string = "";
 
-  let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24]
+  let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
 
-  const persisted_theme: string = localStorage.getItem('theme')
+  const persisted_theme: string = localStorage.getItem("theme");
   if (themes.indexOf(persisted_theme) > -1) {
-    theme = persisted_theme
+    theme = persisted_theme;
   } else {
     if (window.matchMedia) {
-      const darkModeOn = window.matchMedia('(prefers-color-scheme: dark)')
+      const darkModeOn = window.matchMedia("(prefers-color-scheme: dark)");
       if (darkModeOn.matches) {
-        theme = 'g100'
-        console.log(`Dark mode is ${darkModeOn ? '🌒 on' : '☀️ off'}.`)
+        theme = "g100";
+        console.log(`Dark mode is ${darkModeOn ? "🌒 on" : "☀️ off"}.`);
       }
     } else {
-      theme = 'g10'
+      theme = "g10";
     }
   }
 
-  let dark: boolean = theme === 'g100'
-  let theme_icon = !dark ? Sun24 : Moon24
+  let dark: boolean = theme === "g100";
+  let theme_icon = !dark ? Sun24 : Moon24;
 
   function toggle_theme(): void {
-    theme = dark ? 'g10' : 'g100'
-    theme_icon = dark ? Sun24 : Moon24
-    dark = !dark
-    ref.focus()
+    theme = dark ? "g10" : "g100";
+    theme_icon = dark ? Sun24 : Moon24;
+    dark = !dark;
+    ref.focus();
   }
 
   async function retrieve<T>(request: RequestInfo): Promise<T> {
-    const response = await fetch(request)
-    const body = await response.json()
-    return body
+    const response = await fetch(request);
+    const body = await response.json();
+    return body;
   }
 
   interface info {
-    results: []
-    count: string
+    results: [];
+    count: string;
   }
   const search = async () => {
     if (!current_query) {
-      return
+      return;
     }
-    state = 'loading'
-    let current_page = page + 1
+    state = "loading";
+    let current_page = page + 1;
     if (!page) {
-      current_page = 1
+      current_page = 1;
     }
     if (previous_page === current_page && previous_query === current_query) {
-      state = 'completed'
-      return
+      state = "completed";
+      return;
     }
     if (previous_query !== current_query) {
-      current_page = 1
-      page = 0
+      current_page = 1;
+      page = 0;
     }
-    let base_url: string = 'https://lulzx.herokuapp.com/query/'
-    let url: string = base_url + type + '/' + current_query + '/' + current_page
-    const data = await retrieve<info[]>(url)
-    rows = data['results']
-    total = data['count']
+    let base_url: string = "https://lulzx.herokuapp.com/query/";
+    let url: string =
+      base_url + type + "/" + current_query + "/" + current_page;
+    const data = await retrieve<info[]>(url);
+    rows = data["results"];
+    total = data["count"];
     if (total <= 25) {
-      pages = 1
+      pages = 1;
     } else {
-      pages = ~~(total / 25)
+      pages = ~~(total / 25);
     }
-    let nextState = '?' + type + '=' + current_query
-    window.history.replaceState('', '', nextState)
-    previous_page = current_page
-    previous_query = current_query
-    state = 'completed'
-  }
+    let nextState = "?" + type + "=" + current_query;
+    window.history.replaceState("", "", nextState);
+    previous_page = current_page;
+    previous_query = current_query;
+    state = "completed";
+  };
   onMount(async () => {
-    if (typeof window != 'undefined') {
-      let location = new URL(window.location.href)
-      if (location.search !== '') {
-        let current_type: string
-        state = 'loading'
+    if (typeof window != "undefined") {
+      let location = new URL(window.location.href);
+      if (location.search !== "") {
+        let current_type: string;
+        state = "loading";
         for (let x of types) {
           if (location.searchParams.has(x)) {
-            current_type = x
-            type = current_type
-            break
+            current_type = x;
+            type = current_type;
+            break;
           }
         }
-        current_query = location.searchParams.get(current_type)
-        await search()
+        current_query = location.searchParams.get(current_type);
+        await search();
       }
-      let url = 'https://lulzx.herokuapp.com/'
+      let url = "https://lulzx.herokuapp.com/";
       await fetch(url)
         .then(() => {
-          console.log('feels good man!')
+          console.log("feels good man!");
         })
         .catch((error) => {
-          console.error(error)
-        })
-      ref.focus()
+          console.error(error);
+        });
+      ref.focus();
     }
-  })
+  });
 </script>
 
 <style>
@@ -209,7 +210,7 @@
       company="Shoten"
       platformName="Book Search Engine"
       on:click={() => {
-        window.location.href = '/'
+        window.location.href = '/';
       }}
       href="/">
       <HeaderUtilities>
@@ -235,10 +236,10 @@
           {#each types as k}
             <Switch
               on:mouseleave={() => {
-                ref.focus()
+                ref.focus();
               }}
               on:click={() => {
-                type = k
+                type = k;
               }}>
               <div style="display: flex; align-items: center;">
                 <Icon
@@ -257,8 +258,8 @@
           on:click:row={({ detail }) => {
             let str = detail['download'],
               hash = str.split('main/')[1],
-              book_url = window.location.origin + '/book?id=' + hash
-            window.open(book_url, '_blank')
+              book_url = 'https://reader.vercel.app/book?id=' + hash;
+            window.open(book_url, '_blank');
           }}
           title="Search Results"
           description="A total of {total} results were found for your query."

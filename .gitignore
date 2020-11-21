@@ -22,3 +22,5 @@ Pipfile.lock
 venv/
 /shoten-backend/
 playground/
+heatmap/
+src/pages/user/
