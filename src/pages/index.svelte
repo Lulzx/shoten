@@ -258,7 +258,7 @@
           on:click:row={({ detail }) => {
             let str = detail['download'],
               hash = str.split('main/')[1],
-              book_url = 'https://reader.vercel.app/book?id=' + hash;
+              book_url = window.location.origin + '/book?id=' + hash;
             window.open(book_url, '_blank');
           }}
           title="Search Results"
