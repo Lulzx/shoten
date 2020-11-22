@@ -211,6 +211,7 @@
   }
   :global(.bx--content) {
     background: none;
+    overflow-x: hidden;
     padding: 1.5rem;
   }
   :global(.bx--fieldset) {
