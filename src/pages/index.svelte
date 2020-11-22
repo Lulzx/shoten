@@ -26,7 +26,6 @@
   import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
   import Network_224 from "carbon-icons-svelte/lib/Network_224";
   import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
-  import CheckmarkFilled16 from "carbon-icons-svelte/lib/CheckmarkFilled16";
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
 
   metatags.title = "Shoten Search";
@@ -265,15 +264,24 @@
           <StructuredList>
             <StructuredListHead>
               <StructuredListRow head>
-                {#each types.slice(0,3) as type}
+                {#each types.slice(0, 3) as type}
                   <StructuredListCell head>{type}</StructuredListCell>
                 {/each}
               </StructuredListRow>
             </StructuredListHead>
             <StructuredListBody>
               {#each rows as row}
-                <StructuredListRow>
-                  <StructuredListCell>{row['title']} ({row['year']})</StructuredListCell>
+                <StructuredListRow
+                  on:click={() => {
+                    let str = row['download'],
+                      hash = str.split('main/')[1],
+                      book_url = window.location.origin + '/book?id=' + hash;
+                    window.open(book_url, '_blank');
+                  }}>
+                  <StructuredListCell>
+                    {row['title']}
+                    ({row['year']})
+                  </StructuredListCell>
                   <StructuredListCell>{row['author']}</StructuredListCell>
                   <StructuredListCell>{row['publisher']}</StructuredListCell>
                 </StructuredListRow>

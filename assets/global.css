@@ -8,6 +8,7 @@ tr {
   cursor: pointer;
 }
 th,
+.bx--table-header-label,
 .bx--structured-list-th {
   text-transform: capitalize;
 }
