@@ -19,6 +19,7 @@
     StructuredListRow,
     StructuredListCell,
     StructuredListBody,
+    Tag,
   } from "carbon-components-svelte";
   import { onMount } from "svelte";
   import Sun24 from "carbon-icons-svelte/lib/Sun24";
@@ -280,10 +281,13 @@
                   }}>
                   <StructuredListCell>
                     {row['title']}
-                    ({row['year']})
+                    <Tag type="green">{row['year']}</Tag>
                   </StructuredListCell>
                   <StructuredListCell>{row['author']}</StructuredListCell>
-                  <StructuredListCell>{row['publisher']}</StructuredListCell>
+                  <StructuredListCell>
+                    {row['publisher']}
+                    <Tag type="teal">{row['extension']}</Tag>
+                  </StructuredListCell>
                 </StructuredListRow>
               {/each}
             </StructuredListBody>
