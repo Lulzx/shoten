@@ -36,6 +36,7 @@
   let theme: string;
   let page: any = 0;
   let pages: number = 1;
+  let shown: number = 10;
   let rows: any[] = [];
   let total: number;
   let type: string = "title";
@@ -114,7 +115,12 @@
     state = "completed";
   };
   function mobile() {
-    return typeof window.orientation !== "undefined";
+    let status: boolean = false;
+    if (typeof window.orientation !== "undefined") {
+      status = true;
+      shown = 5;
+    }
+    return status;
   }
   onMount(async () => {
     if (typeof window != "undefined") {
@@ -312,7 +318,7 @@
           bind:page
           on:change={search}
           total={pages}
-          shown="5"
+          {shown}
           on:click:button--previous={page}
           on:click:button--next={page} />
       {/if}
