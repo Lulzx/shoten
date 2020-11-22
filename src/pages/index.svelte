@@ -28,7 +28,6 @@
   import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
   import CheckmarkFilled16 from "carbon-icons-svelte/lib/CheckmarkFilled16";
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
-  import { TornadoWarning16 } from "carbon-icons-svelte";
 
   metatags.title = "Shoten Search";
   metatags.description = "Book search engine";
