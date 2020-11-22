@@ -271,11 +271,7 @@
         {#if mobile()}
           <StructuredList>
             <StructuredListHead>
-              <StructuredListRow head>
-                {#each types.slice(0, 3) as type}
-                  <StructuredListCell head>{type}</StructuredListCell>
-                {/each}
-              </StructuredListRow>
+              <StructuredListRow head>{total} results found!</StructuredListRow>
             </StructuredListHead>
             <StructuredListBody>
               {#each rows as row}
@@ -287,13 +283,16 @@
                     window.open(book_url, '_blank');
                   }}>
                   <StructuredListCell>
-                    {row['title']}
+                    <span style="font-weight: bold;">{row['title']}</span>
+                    {#if row['author']}by{/if}
+                    <span style="font-style: italic;">{row['author']}</span>
+                    {#if row['publisher']}from{/if}
+                    <span
+                      style="font-family: monospace;">{row['publisher']}</span>
+                    <br />
                     <Tag type="green">{row['year']}</Tag>
-                  </StructuredListCell>
-                  <StructuredListCell>{row['author']}</StructuredListCell>
-                  <StructuredListCell>
-                    {row['publisher']}
                     <Tag type="teal">{row['extension']}</Tag>
+                    <Tag type="magenta">{row['size']}</Tag>
                   </StructuredListCell>
                 </StructuredListRow>
               {/each}
