@@ -42,6 +42,7 @@
     "sass": "^1.29.0",
     "spank": "^1.4.0",
     "svelte": "^3.29.6",
+    "svelte-device-detector": "^0.2.1",
     "svelte-grid": "^2.3.0",
     "svelte-heatmap": "^1.0.2"
   },

@@ -14,14 +14,21 @@
     PaginationNav,
     Search,
     Switch,
+    StructuredList,
+    StructuredListHead,
+    StructuredListRow,
+    StructuredListCell,
+    StructuredListBody,
   } from "carbon-components-svelte";
+  import { onMount } from "svelte";
   import Sun24 from "carbon-icons-svelte/lib/Sun24";
   import Moon24 from "carbon-icons-svelte/lib/Moon24";
-  import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
-  import Network_224 from "carbon-icons-svelte/lib/Network_224";
   import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
+  import Network_224 from "carbon-icons-svelte/lib/Network_224";
+  import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
+  import CheckmarkFilled16 from "carbon-icons-svelte/lib/CheckmarkFilled16";
   import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
-  import { onMount } from "svelte";
+  import { TornadoWarning16 } from "carbon-icons-svelte";
 
   metatags.title = "Shoten Search";
   metatags.description = "Book search engine";
@@ -50,15 +57,9 @@
   } else {
     if (window.matchMedia) {
       const darkModeOn = window.matchMedia("(prefers-color-scheme: dark)");
-      if (darkModeOn.matches) {
-        theme = "g100";
-        console.log(`Dark mode is ${darkModeOn ? "🌒 on" : "☀️ off"}.`);
-      }
-    } else {
-      theme = "g10";
+      theme = darkModeOn.matches ? "g100" : "g10";
     }
   }
-
   let dark: boolean = theme === "g100";
   let theme_icon = !dark ? Sun24 : Moon24;
 
@@ -113,6 +114,9 @@
     previous_query = current_query;
     state = "completed";
   };
+  function mobile() {
+    return typeof window.orientation !== "undefined";
+  }
   onMount(async () => {
     if (typeof window != "undefined") {
       let location = new URL(window.location.href);
@@ -145,13 +149,13 @@
 <style>
   h1 {
     display: flex;
-    top: 0.25em;
-    flex-direction: column;
+    padding-top: 15vmin;
     justify-content: center;
     text-align: center;
     position: relative;
     font-weight: bold;
-    font-size: 12em;
+    font-size: 15vw;
+    min-width: auto;
     text-shadow: 0.03em 0.03em 0 rgb(15, 98, 254);
   }
 
@@ -159,7 +163,8 @@
     content: attr(data-shadow);
     position: absolute;
     right: 0;
-    top: 0.06em;
+    min-width: auto;
+    padding-top: 0.06em;
     left: 0.06em;
     z-index: -1;
     text-shadow: none;
@@ -202,6 +207,13 @@
   :global(.bx--header__action:hover) {
     background-color: #161616;
   }
+  :global(.bx--content) {
+    background: none;
+    padding: 1.5rem;
+  }
+  :global(.bx--fieldset) {
+    min-width: auto;
+  }
 </style>
 
 {#if ['onload', 'completed'].includes(state)}
@@ -223,7 +235,7 @@
     {#if state === 'onload'}
       <h1 data-shadow="Shoten">Shoten</h1>
     {/if}
-    <Content style="background: none; padding: 1rem">
+    <Content>
       <Form on:submit={search}>
         <Search
           bind:ref
@@ -242,35 +254,55 @@
                 type = k;
               }}>
               <div style="display: flex; align-items: center;">
-                <Icon
-                  render={icons[types.indexOf(k)]}
-                  style="margin-right: 0.5rem;" />
-                {k}
+                <Icon render={icons[types.indexOf(k)]} />
+                &nbsp;&nbsp;{k}
               </div>
             </Switch>
           {/each}
         </ContentSwitcher>
       </FormGroup>
       {#if state === 'completed'}
-        <DataTable
-          sortable
-          zebra
-          on:click:row={({ detail }) => {
-            let str = detail['download'],
-              hash = str.split('main/')[1],
-              book_url = window.location.origin + '/book?id=' + hash;
-            window.open(book_url, '_blank');
-          }}
-          title="Search Results"
-          description="A total of {total} results were found for your query."
-          headers={headers.map((x) => ({ key: x, value: x }))}
-          {rows} />
-        <PaginationNav
-          bind:page
-          on:change={search}
-          total={pages}
-          on:click:button--previous={page}
-          on:click:button--next={page} />
+        {#if mobile()}
+          <StructuredList>
+            <StructuredListHead>
+              <StructuredListRow head>
+                {#each types as type}
+                  <StructuredListCell head>{type}</StructuredListCell>
+                {/each}
+              </StructuredListRow>
+            </StructuredListHead>
+            <StructuredListBody>
+              {#each rows as row}
+                <StructuredListRow>
+                  <StructuredListCell>{row['title']}</StructuredListCell>
+                  <StructuredListCell>{row['author']}</StructuredListCell>
+                  <StructuredListCell>{row['publisher']}</StructuredListCell>
+                  <StructuredListCell>{row['year']}</StructuredListCell>
+                </StructuredListRow>
+              {/each}
+            </StructuredListBody>
+          </StructuredList>
+        {:else}
+          <DataTable
+            sortable
+            zebra
+            on:click:row={({ detail }) => {
+              let str = detail['download'],
+                hash = str.split('main/')[1],
+                book_url = window.location.origin + '/book?id=' + hash;
+              window.open(book_url, '_blank');
+            }}
+            title="Search Results"
+            description="A total of {total} results were found for your query."
+            headers={headers.map((x) => ({ key: x, value: x }))}
+            {rows} />
+          <PaginationNav
+            bind:page
+            on:change={search}
+            total={pages}
+            on:click:button--previous={page}
+            on:click:button--next={page} />
+        {/if}
       {/if}
     </Content>
   </Theme>
