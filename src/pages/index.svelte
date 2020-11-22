@@ -211,6 +211,7 @@
     padding: 1.5rem;
   }
   :global(.bx--fieldset) {
+    margin-bottom: 1rem;
     min-width: auto;
   }
 </style>
@@ -306,13 +307,14 @@
             description="A total of {total} results were found for your query."
             headers={headers.map((x) => ({ key: x, value: x }))}
             {rows} />
-          <PaginationNav
-            bind:page
-            on:change={search}
-            total={pages}
-            on:click:button--previous={page}
-            on:click:button--next={page} />
         {/if}
+        <PaginationNav
+          bind:page
+          on:change={search}
+          total={pages}
+          shown="5"
+          on:click:button--previous={page}
+          on:click:button--next={page} />
       {/if}
     </Content>
   </Theme>
