@@ -265,7 +265,7 @@
           <StructuredList>
             <StructuredListHead>
               <StructuredListRow head>
-                {#each types as type}
+                {#each types.slice(0,3) as type}
                   <StructuredListCell head>{type}</StructuredListCell>
                 {/each}
               </StructuredListRow>
@@ -273,10 +273,9 @@
             <StructuredListBody>
               {#each rows as row}
                 <StructuredListRow>
-                  <StructuredListCell>{row['title']}</StructuredListCell>
+                  <StructuredListCell>{row['title']} ({row['year']})</StructuredListCell>
                   <StructuredListCell>{row['author']}</StructuredListCell>
                   <StructuredListCell>{row['publisher']}</StructuredListCell>
-                  <StructuredListCell>{row['year']}</StructuredListCell>
                 </StructuredListRow>
               {/each}
             </StructuredListBody>
