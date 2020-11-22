@@ -196,21 +196,18 @@
       background-position: 100% -100%;
     }
   }
-
-  :global(.bx--header) {
-    background-color: #161616;
-  }
-
-  :global(.bx--header__action) {
-    padding: revert;
-  }
-
   :global(.bx--header__action:focus) {
-    border-color: #161616;
+    border-color: #00000000;
   }
 
   :global(.bx--header__action:hover) {
-    background-color: #161616;
+    background-color: #00000000;
+  }
+  :global(.bx--header__action) {
+    display: -webkit-box;
+  }
+  :global(.bx--header__menu-toggle) {
+    display: none;
   }
   :global(.bx--content) {
     background: none;
@@ -219,6 +216,9 @@
   :global(.bx--fieldset) {
     margin-bottom: 1rem;
     min-width: auto;
+  }
+  :global(.bx--structured-list) {
+    display: inherit;
   }
 </style>
 
