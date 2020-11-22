@@ -291,7 +291,9 @@
                     <span
                       style="font-family: monospace;">{row['publisher']}</span>
                     <br />
-                    <Tag type="green">{row['year']}</Tag>
+                    {#if row['year']}
+                      <Tag type="green">{row['year']}</Tag>
+                    {/if}
                     <Tag type="teal">{row['extension']}</Tag>
                     <Tag type="magenta">{row['size']}</Tag>
                   </StructuredListCell>
