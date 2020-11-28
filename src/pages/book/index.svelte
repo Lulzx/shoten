@@ -1029,7 +1029,7 @@
     <div class="paper">
       <Grid>
         <Row>
-          <Column><img {src} alt={subtitle} /></Column>
+          <Column><img {src} alt={subtitle} loading="lazy" /></Column>
           <Column>
             <h1>{title}</h1>
             <br />
