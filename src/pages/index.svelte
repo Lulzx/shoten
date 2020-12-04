@@ -132,6 +132,7 @@
         .catch((error) => {
           console.error(error);
         });
+      ref.focus();
     }
   });
 </script>
@@ -181,12 +182,15 @@
       background-position: 100% -100%;
     }
   }
-  :global(.bx--header__action:focus) {
-    border-color: #00000000;
+  :global(.bx--header) {
+    background-color: transparent;
+    border-bottom: transparent;
   }
-
+  :global(.bx--header__action:focus) {
+    border-color: transparent;
+  }
   :global(.bx--header__action:hover) {
-    background-color: #00000000;
+    background-color: transparent;
   }
   :global(.bx--header__action) {
     display: -webkit-box;
@@ -199,6 +203,9 @@
     overflow-x: hidden;
     padding: 1.5rem;
   }
+  :global(.bx--header__action > svg) {
+    fill: var(--cds-ui-05);
+  }
   :global(.bx--fieldset) {
     margin-bottom: 1rem;
     min-width: auto;
@@ -210,30 +217,24 @@
 
 {#if ['onload', 'completed'].includes(state)}
   <Theme persist bind:theme>
-    <Header
-      company="Shoten"
-      platformName="Book Search Engine"
-      on:click={() => {
-        window.location.href = '/';
-      }}
-      href="/">
-      <HeaderUtilities>
-        <HeaderGlobalAction
-          aria-label="toggle theme"
-          icon={theme_icon}
-          on:click={toggle_theme} />
-      </HeaderUtilities>
-    </Header>
     {#if state === 'onload'}
+      <Header company="" platformName="">
+        <HeaderUtilities>
+          <HeaderGlobalAction
+            aria-label="toggle theme"
+            icon={theme_icon}
+            on:click={toggle_theme} />
+        </HeaderUtilities>
+      </Header>
       <h1 data-shadow="Shoten">Shoten</h1>
     {/if}
     <Content>
       <Form on:submit={search}>
         <Search
           bind:ref
+          bind:autofocus
           bind:value={current_query}
-          placeholder="type book query here..."
-          bind:autofocus />
+          placeholder="type book query here..." />
       </Form>
       {#if state === 'completed'}
         {#if mobile()}
