@@ -2,7 +2,7 @@
   "name": "shoten-search",
   "version": "1.0.0",
   "scripts": {
-    "start": "serve build",
+    "start": "serve dist",
     "dev": "run-p routify rollup",
     "dev:nollup": "run-p routify nollup",
     "build": "routify -b && rollup -c && spank -p 0",
