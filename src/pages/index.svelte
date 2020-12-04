@@ -3,17 +3,13 @@
   import Theme from "./components/Theme.svelte";
   import {
     Content,
-    ContentSwitcher,
     DataTable,
     Form,
-    FormGroup,
     Header,
     HeaderGlobalAction,
     HeaderUtilities,
-    Icon,
     PaginationNav,
     Search,
-    Switch,
     StructuredList,
     StructuredListHead,
     StructuredListRow,
@@ -24,10 +20,6 @@
   import { onMount } from "svelte";
   import Sun24 from "carbon-icons-svelte/lib/Sun24";
   import Moon24 from "carbon-icons-svelte/lib/Moon24";
-  import Calendar24 from "carbon-icons-svelte/lib/Calendar24";
-  import Network_224 from "carbon-icons-svelte/lib/Network_224";
-  import UserProfile24 from "carbon-icons-svelte/lib/UserProfile24";
-  import InformationSquare24 from "carbon-icons-svelte/lib/InformationSquare24";
 
   metatags.title = "Shoten Search";
   metatags.description = "Book search engine";
@@ -39,17 +31,20 @@
   let shown: number = 10;
   let rows: any[] = [];
   let total: number;
-  let type: string = "title";
   let state: string = "onload";
   let autofocus: boolean = true;
   const themes: string[] = ["g10", "g100"];
-  let types: string[] = ["title", "author", "publisher", "year"];
-  let headers: string[] = [...types, "size", "extension"];
+  let headers: string[] = [
+    "title",
+    "author",
+    "publisher",
+    "year",
+    "size",
+    "extension",
+  ];
   let previous_page: number = 0;
   let current_query: string = "";
   let previous_query: string = "";
-
-  let icons = [InformationSquare24, UserProfile24, Network_224, Calendar24];
 
   const persisted_theme: string = localStorage.getItem("theme");
   if (themes.indexOf(persisted_theme) > -1) {
@@ -98,8 +93,7 @@
       page = 0;
     }
     let base_url: string = "https://lulzx.herokuapp.com/query/";
-    let url: string =
-      base_url + type + "/" + current_query + "/" + current_page;
+    let url: string = base_url + current_query + "/" + current_page;
     const data = await retrieve<info[]>(url);
     rows = data["results"];
     total = data["count"];
@@ -108,7 +102,7 @@
     } else {
       pages = ~~(total / 25);
     }
-    let nextState = "?" + type + "=" + current_query;
+    let nextState = "?q=" + current_query;
     window.history.replaceState("", "", nextState);
     previous_page = current_page;
     previous_query = current_query;
@@ -126,16 +120,8 @@
     if (typeof window != "undefined") {
       let location = new URL(window.location.href);
       if (location.search !== "") {
-        let current_type: string;
         state = "loading";
-        for (let x of types) {
-          if (location.searchParams.has(x)) {
-            current_type = x;
-            type = current_type;
-            break;
-          }
-        }
-        current_query = location.searchParams.get(current_type);
+        current_query = location.searchParams.get("q");
         await search();
       }
       let url = "https://lulzx.herokuapp.com/";
@@ -146,7 +132,6 @@
         .catch((error) => {
           console.error(error);
         });
-      ref.focus();
     }
   });
 </script>
@@ -247,27 +232,9 @@
         <Search
           bind:ref
           bind:value={current_query}
-          placeholder="type book {type}..."
+          placeholder="type book query here..."
           bind:autofocus />
       </Form>
-      <FormGroup legendText="Filter (fields)">
-        <ContentSwitcher selectedIndex={types.indexOf(type)}>
-          {#each types as k}
-            <Switch
-              on:mouseleave={() => {
-                ref.focus();
-              }}
-              on:click={() => {
-                type = k;
-              }}>
-              <div style="display: flex; align-items: center;">
-                <Icon render={icons[types.indexOf(k)]} />
-                &nbsp;&nbsp;{k}
-              </div>
-            </Switch>
-          {/each}
-        </ContentSwitcher>
-      </FormGroup>
       {#if state === 'completed'}
         {#if mobile()}
           <StructuredList>
