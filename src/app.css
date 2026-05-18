@@ -1,0 +1,50 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-background: oklch(99% 0 0);
+  --color-foreground: oklch(15% 0 0);
+  --color-muted: oklch(96% 0 0);
+  --color-muted-foreground: oklch(45% 0 0);
+  --color-border: oklch(90% 0 0);
+  --color-accent: oklch(55% 0.22 264);
+  --color-accent-foreground: oklch(98% 0 0);
+
+  --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+}
+
+.dark {
+  --color-background: oklch(14% 0.005 264);
+  --color-foreground: oklch(96% 0 0);
+  --color-muted: oklch(20% 0.01 264);
+  --color-muted-foreground: oklch(65% 0.01 264);
+  --color-border: oklch(26% 0.01 264);
+  --color-accent: oklch(72% 0.18 264);
+  --color-accent-foreground: oklch(14% 0.005 264);
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+}
+
+@layer utilities {
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    background: linear-gradient(135deg, var(--color-foreground), var(--color-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A search engine for books and audiobooks." />
+    <script>
+      // prevent FOUC for dark mode
+      const stored = localStorage.getItem('mode-watcher-mode');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const dark = stored === 'dark' || (!stored && prefersDark);
+      if (dark) document.documentElement.classList.add('dark');
+    </script>
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover" class="h-full bg-background text-foreground antialiased">
+    <div style="display: contents" class="h-full">%sveltekit.body%</div>
+  </body>
+</html>
