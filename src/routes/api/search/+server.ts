@@ -6,12 +6,12 @@ export const GET: RequestHandler = async ({ url, setHeaders }) => {
   const q = url.searchParams.get('q')?.trim() ?? '';
   const page = Math.max(1, Number(url.searchParams.get('page') ?? '1') || 1);
 
-  if (!q) return json({ results: [], count: 0, page, pages: 0 });
+  if (!q) return json({ results: [], page, hasMore: false });
 
   try {
-    const { results, count, pages } = await searchBooks(q, page);
+    const { results, hasMore } = await searchBooks(q, page);
     setHeaders({ 'cache-control': 'public, max-age=300, s-maxage=600' });
-    return json({ results, count, page, pages });
+    return json({ results, page, hasMore });
   } catch (err) {
     console.error('search failed', err);
     throw error(502, 'upstream book index is unreachable');

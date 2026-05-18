@@ -1,17 +1,21 @@
 import type { Book } from '$lib/types';
 
-const MIRRORS = ['https://libgen.is', 'https://libgen.rs', 'https://libgen.st'];
+const MIRRORS = ['https://libgen.li', 'https://libgen.gs'];
 const PAGE_SIZE = 25;
+const FETCH_TIMEOUT_MS = 12_000;
 
-interface LibgenRow {
-  id: string;
-  title: string;
-  author: string;
-  publisher: string;
-  year: string;
-  filesize: string;
-  extension: string;
+interface EditionRow {
+  title?: string;
+  author?: string;
+  publisher?: string;
+  year?: string;
+  files?: Record<string, { f_id: string; md5: string }>;
+}
+
+interface FileRow {
   md5: string;
+  extension?: string;
+  filesize?: string;
 }
 
 async function fetchWithFallback(path: string): Promise<Response> {
@@ -19,8 +23,11 @@ async function fetchWithFallback(path: string): Promise<Response> {
   for (const base of MIRRORS) {
     try {
       const res = await fetch(base + path, {
-        headers: { 'user-agent': 'shoten/2.0 (+https://github.com/lulzx/shoten)' },
-        signal: AbortSignal.timeout(8000)
+        headers: {
+          'user-agent': 'shoten/2.0 (+https://github.com/lulzx/shoten)',
+          accept: 'text/html,application/json;q=0.9'
+        },
+        signal: AbortSignal.timeout(FETCH_TIMEOUT_MS)
       });
       if (res.ok) return res;
       lastError = new Error(`${base} → ${res.status}`);
@@ -31,22 +38,17 @@ async function fetchWithFallback(path: string): Promise<Response> {
   throw lastError ?? new Error('all libgen mirrors failed');
 }
 
-function parseIds(html: string): string[] {
+function parseEditionIds(html: string): string[] {
   const ids = new Set<string>();
-  const re = /<tr[^>]*>\s*<td[^>]*>(\d{3,})<\/td>/gi;
+  const re = /edition\.php\?id=(\d+)/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(html)) !== null) ids.add(m[1]);
-  return [...ids];
+  return [...ids].slice(0, PAGE_SIZE);
 }
 
-function parseTotal(html: string): number {
-  const m = html.match(/(\d+)\s+files\s+found/i);
-  return m ? Number(m[1]) : 0;
-}
-
-function humanSize(bytes: string): string {
+function humanSize(bytes: string | undefined): string {
   const n = Number(bytes);
-  if (!Number.isFinite(n) || n <= 0) return '—';
+  if (!Number.isFinite(n) || n <= 0) return '';
   const units = ['B', 'KB', 'MB', 'GB'];
   let i = 0;
   let v = n;
@@ -57,38 +59,65 @@ function humanSize(bytes: string): string {
   return `${v.toFixed(v < 10 ? 1 : 0)} ${units[i]}`;
 }
 
-function toBook(row: LibgenRow): Book {
-  return {
-    id: row.id,
-    title: row.title || 'Untitled',
-    author: row.author || '',
-    publisher: row.publisher || '',
-    year: row.year && row.year !== '0' ? row.year : '',
-    size: humanSize(row.filesize),
-    extension: row.extension || '',
-    md5: row.md5,
-    download: `http://library.lol/main/${row.md5.toUpperCase()}`
-  };
+function cleanAuthor(author: string): string {
+  if (!author) return '';
+  return author.split(';').map((s) => s.trim()).filter(Boolean).slice(0, 2).join(', ');
 }
 
 export async function searchBooks(
   query: string,
   page: number
-): Promise<{ results: Book[]; count: number; pages: number }> {
-  const safe = encodeURIComponent(query.trim());
-  if (!safe) return { results: [], count: 0, pages: 0 };
+): Promise<{ results: Book[]; hasMore: boolean }> {
+  const q = encodeURIComponent(query.trim());
+  if (!q) return { results: [], hasMore: false };
 
-  const searchPath = `/search.php?req=${safe}&res=${PAGE_SIZE}&view=simple&phrase=1&column=def&page=${page}`;
-  const searchHtml = await fetchWithFallback(searchPath).then((r) => r.text());
-  const ids = parseIds(searchHtml);
-  const count = parseTotal(searchHtml);
-  const pages = Math.max(1, Math.ceil(count / PAGE_SIZE));
+  const searchPath = `/index.php?req=${q}&page=${page}`;
+  const html = await fetchWithFallback(searchPath).then((r) => r.text());
+  const editionIds = parseEditionIds(html);
+  if (editionIds.length === 0) return { results: [], hasMore: false };
 
-  if (ids.length === 0) return { results: [], count, pages };
+  const fields = 'title,author,publisher,year,files';
+  const editionsPath = `/json.php?object=e&ids=${editionIds.join(',')}&addkeys=files&fields=${fields}`;
+  const editions = (await fetchWithFallback(editionsPath).then((r) => r.json())) as Record<
+    string,
+    EditionRow
+  >;
 
-  const fields = 'id,title,author,year,extension,filesize,publisher,md5';
-  const jsonPath = `/json.php?ids=${ids.join(',')}&fields=${fields}`;
-  const rows = (await fetchWithFallback(jsonPath).then((r) => r.json())) as LibgenRow[];
+  const fileIds: string[] = [];
+  const editionToFileId = new Map<string, string>();
+  for (const [eid, ed] of Object.entries(editions)) {
+    const firstFile = ed.files && Object.values(ed.files)[0];
+    if (firstFile?.f_id) {
+      fileIds.push(firstFile.f_id);
+      editionToFileId.set(eid, firstFile.f_id);
+    }
+  }
 
-  return { results: rows.map(toBook), count, pages };
+  let files: Record<string, FileRow> = {};
+  if (fileIds.length > 0) {
+    const filesPath = `/json.php?object=f&ids=${fileIds.join(',')}&fields=md5,extension,filesize`;
+    files = (await fetchWithFallback(filesPath).then((r) => r.json())) as Record<string, FileRow>;
+  }
+
+  const results: Book[] = [];
+  for (const eid of editionIds) {
+    const ed = editions[eid];
+    if (!ed) continue;
+    const fid = editionToFileId.get(eid);
+    const file = fid ? files[fid] : undefined;
+    if (!file?.md5) continue;
+    results.push({
+      id: eid,
+      title: ed.title || 'Untitled',
+      author: cleanAuthor(ed.author ?? ''),
+      publisher: ed.publisher ?? '',
+      year: ed.year && ed.year !== '0' ? ed.year : '',
+      size: humanSize(file.filesize),
+      extension: (file.extension ?? '').toLowerCase(),
+      md5: file.md5,
+      download: `https://libgen.li/ads.php?md5=${file.md5}`
+    });
+  }
+
+  return { results, hasMore: editionIds.length >= PAGE_SIZE };
 }

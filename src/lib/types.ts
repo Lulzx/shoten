@@ -12,7 +12,6 @@ export interface Book {
 
 export interface SearchResponse {
   results: Book[];
-  count: number;
   page: number;
-  pages: number;
+  hasMore: boolean;
 }

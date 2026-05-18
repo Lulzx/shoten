@@ -7,8 +7,7 @@
   let query = $state('');
   let page = $state(1);
   let results = $state<Book[]>([]);
-  let count = $state(0);
-  let pages = $state(0);
+  let hasMore = $state(false);
   let loading = $state(false);
   let touched = $state(false);
   let input: HTMLInputElement | undefined = $state();
@@ -29,16 +28,14 @@
       if (!res.ok) throw new Error(await res.text());
       const data: SearchResponse = await res.json();
       results = data.results;
-      count = data.count;
-      pages = data.pages;
+      hasMore = data.hasMore;
       lastQuery = query;
       lastPage = page;
       history.replaceState(null, '', `?q=${encodeURIComponent(query)}${page > 1 ? `&page=${page}` : ''}`);
     } catch (err) {
       console.error(err);
       results = [];
-      count = 0;
-      pages = 0;
+      hasMore = false;
     } finally {
       loading = false;
     }
@@ -50,7 +47,8 @@
   }
 
   async function go(next: number) {
-    if (next < 1 || next > pages || next === page) return;
+    if (next < 1 || next === page) return;
+    if (next > page && !hasMore) return;
     page = next;
     await run();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -134,7 +132,7 @@
     {#if results.length > 0}
       <div class="mt-10">
         <p class="text-xs uppercase tracking-widest text-muted-foreground mb-4">
-          {count.toLocaleString()} results
+          {results.length} results{page > 1 ? ` · page ${page}` : ''}
         </p>
 
         <ul class="divide-y divide-border">
@@ -172,7 +170,7 @@
           {/each}
         </ul>
 
-        {#if pages > 1}
+        {#if page > 1 || hasMore}
           <nav class="mt-8 flex items-center justify-center gap-2 text-sm">
             <button
               type="button"
@@ -183,13 +181,11 @@
             >
               <ChevronLeft class="size-4" />
             </button>
-            <span class="text-muted-foreground tabular-nums">
-              page {page} of {pages}
-            </span>
+            <span class="text-muted-foreground tabular-nums">page {page}</span>
             <button
               type="button"
               onclick={() => go(page + 1)}
-              disabled={page >= pages}
+              disabled={!hasMore}
               class="rounded-full p-2 hover:bg-muted disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
               aria-label="next page"
             >
